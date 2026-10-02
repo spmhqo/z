@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert Prompt Bundle</title>
+    <link rel="icon" href="spm.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #faf9f6;
+            --surface-color: #ffffff;
+            --border-color: #e2dfdc;
+            --border-focus: #706b63;
+            --text-main: #2c2a29;
+            --text-muted: #6e6963;
+            --accent: #1a1918;
+            --accent-hover: #383532;
+            --success: #2e7d32;
+            --header-color: #4338ca;
+            --font-serif: 'Newsreader', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+        .document-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 48px 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+        }
+        .doc-header {
+            text-align: center;
+            margin-bottom: 36px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 30px;
+        }
+        .doc-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--header-color);
+            margin-bottom: 8px;
+        }
+        .doc-subtitle { font-size: 0.95rem; color: var(--text-muted); font-weight: 400; }
+        .section-heading {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 30px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .input-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+        .doc-input {
+            width: 100%;
+            min-height: 180px;
+            padding: 12px 16px;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: vertical;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .doc-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            background: var(--surface-color);
+            box-shadow: 0 0 0 3px rgba(112, 107, 99, 0.1);
+        }
+        .prompt-card {
+            margin-top: 24px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .prompt-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--accent); }
+        .prompt-preview {
+            display: block;
+            width: 100%;
+            min-height: 620px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            resize: vertical;
+            white-space: pre-wrap;
+            margin-bottom: 16px;
+        }
+        .copy-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+        .copy-btn:hover { background: var(--accent-hover); }
+        .copy-btn:focus-visible { outline: 3px solid rgba(67, 56, 202, 0.35); outline-offset: 2px; }
+        .copy-btn.copied { background: var(--success); }
+        .doc-footer {
+            text-align: center;
+            margin-top: 42px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+        @media (max-width: 640px) {
+            body { padding: 12px 8px; }
+            .document-container { padding: 24px 16px; }
+            .doc-title { font-size: 1.8rem; }
+            .prompt-card { padding: 16px; }
+            .prompt-preview { min-height: 700px; }
+        }
+    </style>
+</head>
+<body>
+    <main class="document-container">
+        <header class="doc-header">
+            <h1 class="doc-title">Convert Prompt Bundle</h1>
+            <p class="doc-subtitle">(as a digital product)</p>
+        </header>
+
+        <section aria-labelledby="input-heading">
+            <h2 class="section-heading" id="input-heading">Prompt Bundle Input</h2>
+            <label class="input-label" for="promptBundle">1 multiline dynamic input field:</label>
+            <textarea id="promptBundle" class="doc-input" placeholder="Paste your prompt bundle here" aria-label="Insert prompt bundle"></textarea>
+        </section>
+
+        <section aria-labelledby="prompt-heading">
+            <h2 class="section-heading" id="prompt-heading">Generated Prompt</h2>
+            <div class="prompt-card">
+                <div class="prompt-header">
+                    <span class="prompt-title">Live Prompt Preview</span>
+                </div>
+                <textarea id="promptOutput" class="prompt-preview" readonly aria-label="Generated prompt preview"></textarea>
+                <button class="copy-btn" id="copyButton" type="button">Copy Prompt</button>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </footer>
+    </main>
+
+    <script>
+        const promptTemplate = `Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Please review all the prompts in the prompt bundle and convert the bundle into a complete, ready-to-publish digital product, strictly following the format, structure, content presentation, and approach used in the EXAMPLE OF THE DESIRED AND READY-TO-PUBLISH CONTENT below.
+
+Treat the example as the model for how the prompt bundle should be transformed into the final digital product. Do not merely reproduce or summarize the prompts; organize and present their content in the same manner and style demonstrated in the example.
+
+PROMPT BUNDLE
+
+[Insert prompt bundle]
+
+EXAMPLE OF THE DESIRED AND READY-TO-PUBLISH CONTENT
+
+25 Specialty Image Repair Prompts for Local Businesses
+Copy, Paste, and Instantly Improve Weak Google Business Profile Images
+By Siva Prasad Mukherjee
+________________________________________
+Introduction
+One of the biggest mistakes people make with AI image tools is overcomplicating everything.
+You do NOT need:
+• complicated prompt engineering
+• technical jargon
+• cinematic photography language
+• giant paragraphs of instructions
+In fact, simple prompts usually work best.
+Especially for local business images.
+Remember:
+you are NOT trying to create fantasy artwork.
+You are simply improving weak existing business images.
+That’s it.
+The prompts in this guide are designed specifically for:
+• Google Business Profile images
+• local businesses
+• quick visual improvements
+• realistic enhancements
+And honestly?
+You’ll usually get the best results by:
+• making one change at a time
+• iterating slowly
+• keeping the image realistic
+Don’t try to “perfect” the image.
+Just make it:
+• cleaner
+• brighter
+• sharper
+• warmer
+• more inviting
+• more professional
+That’s the goal.
+Let’s get into the prompts.
+________________________________________
+Restaurants
+1. Brighten Restaurant Interior
+Brighten this restaurant image and make the lighting feel warmer and more inviting while keeping everything realistic.
+________________________________________
+2. Improve Food Photography
+Improve the lighting and colors of this food photo and make the meal look fresher and more appetizing while keeping it natural-looking.
+________________________________________
+3. Clean Up Dining Area
+Clean up this restaurant interior and make the space look neater, brighter, and more welcoming while keeping it realistic.
+________________________________________
+4. Improve Exterior Restaurant Photo
+Improve this restaurant storefront image and make the business look cleaner, brighter, and more inviting.
+________________________________________
+Salons & Spas
+5. Brighten Salon Interior
+Brighten this salon image and make the space feel cleaner, warmer, and more professional.
+________________________________________
+6. Luxury Spa Feel
+Improve the lighting and atmosphere of this spa image and make the business feel calm, relaxing, and upscale while keeping it realistic.
+________________________________________
+7. Remove Clutter
+Remove visual clutter from this salon image and make the space look cleaner and more organized.
+________________________________________
+Med Spas
+8. Premium Medical Spa Look
+Improve this med spa image and make the business feel brighter, cleaner, and more upscale while keeping it realistic and professional.
+________________________________________
+9. Improve Waiting Room
+Improve the lighting and appearance of this waiting room and make it feel warmer, cleaner, and more welcoming.
+________________________________________
+Gyms & Fitness Centers
+10. Improve Gym Interior
+Brighten this gym image and make the equipment area look cleaner, newer, and more energetic.
+________________________________________
+11. Modern Fitness Feel
+Improve this fitness center image and make the business feel brighter, cleaner, and more modern.
+________________________________________
+Realtors & Real Estate
+12. Improve Exterior Home Photo
+Brighten this exterior property image and improve the curb appeal while keeping the image realistic.
+________________________________________
+13. Warm Up Interior
+Improve the lighting and atmosphere of this room and make it feel warmer, cleaner, and more inviting.
+________________________________________
+14. Improve Kitchen Photo
+Improve this kitchen image and make the space look brighter, cleaner, and more modern while keeping it realistic.
+________________________________________
+Hotels & Resorts
+15. Improve Hotel Lobby
+Improve the lighting and appearance of this hotel lobby and make it feel warmer, cleaner, and more upscale.
+________________________________________
+16. Resort Pool Enhancement
+Brighten this resort pool image and make the space feel more relaxing, inviting, and professionally maintained.
+________________________________________
+
+Cafés & Coffee Shops
+17. Cozy Café Feel
+Improve this café image and make the business feel warmer, more comfortable, and more inviting.
+________________________________________
+18. Improve Coffee Shop Lighting
+Brighten this coffee shop image and improve the lighting while keeping the atmosphere natural and realistic.
+________________________________________
+Retail Businesses
+19. Improve Retail Interior
+Improve this retail store image and make the space feel brighter, cleaner, and more organized.
+________________________________________
+20. Luxury Boutique Feel
+Improve this boutique image and make the business feel more premium and visually appealing while keeping it realistic.
+________________________________________
+General Cleanup Prompts
+21. Sharpen Blurry Image
+Improve the sharpness and clarity of this image while keeping it natural-looking.
+________________________________________
+22. Improve Dark Image
+Brighten this image and improve the lighting while keeping the image realistic.
+________________________________________
+23. Remove Clutter
+Remove unnecessary visual clutter from this image and make the space look cleaner and more professional.
+________________________________________
+24. Improve Color & Warmth
+Improve the colors and warmth of this image and make the business feel more inviting.
+________________________________________
+25. Improve Overall Professional Appearance
+Improve this business image and make the space look cleaner, brighter, more modern, and more professional while keeping everything realistic.
+________________________________________
+Final Thoughts
+Remember:
+simple prompts usually work best.
+You do NOT need:
+• giant prompt formulas
+• complicated instructions
+• technical photography language
+Most of the time, ChatGPT already understands:
+• what looks brighter
+• what feels cleaner
+• what looks more modern
+• what feels more welcoming
+So keep your instructions:
+• short
+• clear
+• practical
+And don’t be afraid to iterate.
+Sometimes:
+• Prompt #1 improves the lighting
+• Prompt #2 removes clutter
+• Prompt #3 improves warmth
+That’s normal.
+Small improvements add up quickly.
+And remember:
+this is a simple foot-in-the-door service.
+You are not creating museum artwork.
+You are helping local businesses make stronger first impressions online.
+That alone is very valuable.`;
+
+        const bundleInput = document.getElementById('promptBundle');
+        const promptOutput = document.getElementById('promptOutput');
+        const copyButton = document.getElementById('copyButton');
+
+        function updatePrompt() {
+            promptOutput.value = promptTemplate.replaceAll('[Insert prompt bundle]', bundleInput.value);
+        }
+
+        async function copyPrompt() {
+            const originalText = copyButton.textContent;
+            try {
+                await navigator.clipboard.writeText(promptOutput.value);
+            } catch (error) {
+                promptOutput.focus();
+                promptOutput.select();
+                document.execCommand('copy');
+                window.getSelection().removeAllRanges();
+            }
+            copyButton.textContent = '✓ Copied!';
+            copyButton.classList.add('copied');
+            window.setTimeout(() => {
+                copyButton.textContent = originalText;
+                copyButton.classList.remove('copied');
+            }, 2000);
+        }
+
+        bundleInput.addEventListener('input', updatePrompt);
+        copyButton.addEventListener('click', copyPrompt);
+        updatePrompt();
+    </script>
+</body>
+</html>
