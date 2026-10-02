@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myths Finder</title>
+    <link rel="icon" href="spm.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #faf9f6;
+            --surface-color: #ffffff;
+            --border-color: #e2dfdc;
+            --border-focus: #706b63;
+            --text-main: #2c2a29;
+            --text-muted: #6e6963;
+            --accent: #1a1918;
+            --accent-hover: #383532;
+            --success: #2e7d32;
+            --header-color: #4338ca;
+            --font-serif: 'Newsreader', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .document-container {
+            max-width: 760px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 48px 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Header Styles */
+        .doc-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 30px;
+        }
+
+        .doc-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--header-color);
+            margin-bottom: 8px;
+        }
+
+        .doc-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Section Layout */
+        .section-heading {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 36px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        /* Output Box Styling */
+        .output-card {
+            margin-top: 30px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .output-title {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .prompt-preview {
+            width: 100%;
+            min-height: 420px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            resize: vertical;
+            white-space: pre-wrap;
+            margin-bottom: 16px;
+        }
+
+        .copy-btn {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        /* Footer */
+        .doc-footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            body {
+                padding: 12px 8px;
+            }
+            .document-container {
+                padding: 24px 16px;
+            }
+            .doc-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="document-container">
+        
+        <!-- Header -->
+        <header class="doc-header">
+            <h1 class="doc-title">Myths Finder</h1>
+            <p class="doc-subtitle">(from a content.)</p>
+        </header>
+
+        <!-- Prompt Section -->
+        <section>
+            <h2 class="section-heading">Prompt Box</h2>
+            
+            <div class="output-card">
+                <div class="output-header">
+                    <span class="output-title">Prompt</span>
+                </div>
+                <textarea id="promptBox" class="prompt-preview" readonly>Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Read, understand, and review the content of the uploaded document.
+
+TASK
+
+Identify genuine myths, common misconceptions, misleading assumptions, or widely held but incomplete beliefs related to the topics, concepts, methods, problems, or activities discussed in the document that could be turned into responsible, useful, and credible social media posts.
+
+The objective is not simply to find things that are wrong. The objective is to identify misconceptions that readers are reasonably likely to encounter and then clarify what is actually true.
+
+Look beyond the main topic of the document. A misconception related to one piece of information or activity may also be relevant to another topic or use case connected to the content.
+
+FOR EACH POTENTIAL MYTH, DETERMINE FIRST:
+
+1. Is it genuinely a widely held myth?
+​2. Is it better described as a common misconception?
+3. Is it an incomplete belief that becomes misleading without context?
+4. Is it simply a common mistake rather than a myth?
+
+Do not automatically label every incorrect statement as a "myth."
+
+FOR EACH IDENTIFIED MYTH OR MISCONCEPTION, PROVIDE:
+
+Classification: Myth / Common Misconception / Incomplete Belief / Common Mistake
+
+Myth or belief: State the belief clearly and fairly
+
+Reality: Explain what is actually true
+
+Why people believe it: Where relevant, explain the source of the misunderstanding
+
+Context and limitations: State relevant conditions, exceptions, or circumstances
+
+Evidence or reasoning: Explain the factual, logical, technical, scientific, or industry basis for the correction
+
+Social media version: Write a concise, engaging myth-buster statement suitable for a standalone social media post
+
+Source basis: Identify the part of the document that makes the misconception relevant
+
+RESPONSIBILITY AND ACCURACY RULES
+
+Do not invent myths merely to create content.
+
+Do not manufacture a "myth" by creating a weak or imaginary opposing position.
+
+Do not label a claim as a myth simply because you disagree with it.
+
+Do not use sensational, absolute, or misleading corrections.
+
+Preserve important context, conditions, exceptions, and limitations.
+
+If a claim is disputed, uncertain, context-dependent, or supported by limited evidence, say so.
+
+If the available information is insufficient to establish that something is genuinely a myth or common misconception, do not present it as one.
+
+Where a myth-buster depends on factual, technical, scientific, statistical, legal, medical, financial, or industry-specific claims, verify the relevant claim using reliable and authoritative sources before presenting it as fact.
+
+Clearly distinguish between what is supported by the document, what is derived through reasoning, and what requires external verification.
+
+Do not attribute a belief to "people," "experts," "the industry," or any specific group without sufficient basis.
+
+QUALITY STANDARD
+
+Prioritize myth-busters that:
+
+1. Address a meaningful reader misconception
+​2. Correct a potentially consequential misunderstanding
+3. Reveal an important distinction or overlooked condition
+4. Provide genuinely useful knowledge
+5. Demonstrate subject-matter understanding without exaggeration
+
+The purpose is to build credibility through accuracy and useful clarification, not through controversy or sensationalism.
+
+OUTPUT
+
+Group the results under:
+
+A. Genuine Myths
+B. Common Misconceptions
+C. Incomplete or Misleading Beliefs
+D. Common Mistakes
+
+Within each group, prioritize the most relevant and well-supported items first.</textarea>
+                <button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </footer>
+
+    </div>
+
+    <script>
+        // Copy functionality with visual feedback
+        function copyPrompt() {
+            const outputBox = document.getElementById('promptBox');
+            const btn = document.querySelector('.copy-btn');
+
+            outputBox.select();
+            outputBox.setSelectionRange(0, 99999);
+
+            try {
+                document.execCommand('copy');
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+
+                window.getSelection().removeAllRanges();
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        }
+    </script>
+</body>
+</html>

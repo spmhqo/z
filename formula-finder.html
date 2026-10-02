@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formula Finder</title>
+    <link rel="icon" href="spm.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #faf9f6;
+            --surface-color: #ffffff;
+            --border-color: #e2dfdc;
+            --border-focus: #706b63;
+            --text-main: #2c2a29;
+            --text-muted: #6e6963;
+            --accent: #1a1918;
+            --accent-hover: #383532;
+            --success: #2e7d32;
+            --header-color: #4338ca;
+            --font-serif: 'Newsreader', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .document-container {
+            max-width: 760px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 48px 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Header Styles */
+        .doc-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 30px;
+        }
+
+        .doc-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--header-color);
+            margin-bottom: 8px;
+        }
+
+        .doc-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Section Layout */
+        .section-heading {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 36px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        /* Output Box Styling */
+        .output-card {
+            margin-top: 30px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .output-title {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .prompt-preview {
+            width: 100%;
+            min-height: 420px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            resize: vertical;
+            white-space: pre-wrap;
+            margin-bottom: 16px;
+        }
+
+        .copy-btn {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        /* Footer */
+        .doc-footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            body {
+                padding: 12px 8px;
+            }
+            .document-container {
+                padding: 24px 16px;
+            }
+            .doc-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="document-container">
+        
+        <!-- Header -->
+        <header class="doc-header">
+            <h1 class="doc-title">Formula Finder</h1>
+            <p class="doc-subtitle">(from a content.)</p>
+        </header>
+
+        <!-- Prompt Section -->
+        <section>
+            <h2 class="section-heading">Prompt Box</h2>
+            
+            <div class="output-card">
+                <div class="output-header">
+                    <span class="output-title">Prompt</span>
+                </div>
+                <textarea id="promptBox" class="prompt-preview" readonly>Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Read, understand, and review the content of the uploaded document.
+
+TASK
+
+Identify practical, useful, and memorable social media content assets that can be derived from the information, concepts, methods, principles, instructions, problems, and activities discussed in the document.
+
+The objective is to discover concise insights that can stand alone as social media posts and provide immediate value to the reader.
+
+Look beyond the main topic of the document. An idea, piece of information, method, principle, or activity discussed in one context may also produce a useful insight for another relevant context or activity.
+
+Identify the following types of practical insight assets:
+
+1. FORMULAS
+
+Identify practical formulas, relationships, patterns, equations, or heuristics that express an important idea discussed in or meaningfully derived from the content.
+
+A formula may be expressed as a simple relationship such as:
+
+Factor A + Factor B = Outcome
+
+The formula does not have to be mathematical. It may be a memorable conceptual or practical formula.
+
+2. RULES
+
+Identify concise, actionable rules that can guide a reader's decision, behaviour, or execution of an activity discussed in the content.
+
+A rule should express a meaningful principle, not merely restate a sentence from the document.
+
+3. DOS AND DON'TS
+
+Identify useful actions that readers should take and actions they should avoid when performing the activities, applying the methods, or dealing with the problems discussed in the content.
+
+Do not create generic advice that has no meaningful connection to the content.
+
+FOR EACH INSIGHT, PROVIDE:
+
+Type: Formula / Rule / Do / Don't
+
+Insight: A concise, memorable statement suitable for a standalone social media post
+
+Context: The topic, activity, problem, method, or principle to which it relates
+
+Why it matters: A brief explanation of the practical significance
+
+Application: When or where the reader can apply it
+
+Source basis: The specific idea, information, or reasoning in the document from which the insight is derived
+
+QUALITY RULES
+
+Prioritize usefulness, clarity, memorability, and practical relevance.
+
+Prefer insights that can stand alone without requiring the reader to read the original document.
+
+Keep the wording concise enough to work as a social media post or visual quote.
+
+Preserve the meaning and limitations of the original content.
+
+Do not invent arbitrary formulas, rules, dos, or don'ts merely to increase the number of outputs.
+
+Do not turn ordinary statements from the document into artificial insights unless they provide genuine standalone value.
+
+Where an insight is context-dependent, clearly state the relevant condition or limitation.
+
+Distinguish between an insight explicitly stated in the document and one meaningfully derived from it.
+
+Do not present a derived insight as though it were a direct statement from the source document.
+
+OUTPUT
+
+Group the results under:
+
+A. Formulas
+B. Rules
+C. Dos
+D. Don'ts
+
+Within each group, prioritize the strongest and most useful insights first.</textarea>
+                <button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </footer>
+
+    </div>
+
+    <script>
+        // Copy functionality with visual feedback
+        function copyPrompt() {
+            const outputBox = document.getElementById('promptBox');
+            const btn = document.querySelector('.copy-btn');
+
+            outputBox.select();
+            outputBox.setSelectionRange(0, 99999);
+
+            try {
+                document.execCommand('copy');
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+
+                window.getSelection().removeAllRanges();
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposition from A Prompt Bundle</title>
+    <link rel="icon" href="spm.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #faf9f6;
+            --surface-color: #ffffff;
+            --border-color: #e2dfdc;
+            --border-focus: #706b63;
+            --text-main: #2c2a29;
+            --text-muted: #6e6963;
+            --accent: #1a1918;
+            --accent-hover: #383532;
+            --success: #2e7d32;
+            --header-color: #4338ca;
+            --font-serif: 'Newsreader', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .document-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 48px 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+        }
+
+        .doc-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 30px;
+        }
+
+        .doc-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--header-color);
+            margin-bottom: 8px;
+        }
+
+        .doc-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .section-heading {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 36px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .input-group { margin-bottom: 20px; }
+
+        .input-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .doc-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 110px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .doc-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            background: var(--surface-color);
+            box-shadow: 0 0 0 3px rgba(112, 107, 99, 0.1);
+        }
+
+        .output-card {
+            margin-top: 30px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .output-title {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .prompt-preview {
+            width: 100%;
+            min-height: 180px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.65;
+            resize: vertical;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            margin-bottom: 16px;
+        }
+
+        .prompt-card { margin-bottom: 22px; }
+
+        .placeholder-token { display: inline; }
+        .placeholder-token.filled { white-space: pre-wrap; }
+
+        .copy-btn {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        .copy-btn:hover { background: var(--accent-hover); }
+        .copy-btn.copied { background: var(--success); }
+
+        .doc-footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 12px 8px; }
+            .document-container { padding: 24px 16px; }
+            .doc-title { font-size: 1.8rem; }
+            .output-card { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <main class="document-container">
+        <header class="doc-header">
+            <h1 class="doc-title">Proposition from A Prompt Bundle</h1>
+            <p class="doc-subtitle">(from prompt bundle to proposition to reader's questions.)</p>
+        </header>
+
+        <section aria-labelledby="inputs-heading">
+            <h2 class="section-heading" id="inputs-heading">Inputs</h2>
+            <div class="input-group">
+                <label class="input-label" for="inputHowTo">How-to Question</label>
+                <textarea id="inputHowTo" class="doc-input" placeholder="Enter the how-to question" oninput="updatePrompt()"></textarea>
+            </div>
+            <div class="input-group">
+                <label class="input-label" for="inputContent">Content</label>
+                <textarea id="inputContent" class="doc-input" placeholder="Enter or paste the content" oninput="updatePrompt()"></textarea>
+            </div>
+        </section>
+
+        <section aria-labelledby="output-heading">
+            <h2 class="section-heading" id="output-heading">Generated Prompts</h2>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#1</span></div>
+                <div class="prompt-preview" id="promptBox1" role="textbox" aria-readonly="true">Please review the prompt bundle contained in the uploaded document and determine what the prompts, when used together, will generate.</div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox1', this)">Copy Prompt</button>
+            </div>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#2</span></div>
+                <div class="prompt-preview" id="promptBox2" role="textbox" aria-readonly="true">Identify the central topic of this prompt bundle and formulate it as a “how-to” question.</div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox2', this)">Copy Prompt</button>
+            </div>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#3</span></div>
+                <div class="prompt-preview" id="promptBox3" role="textbox" aria-readonly="true">How To do this step?:
+
+<span class="placeholder-token" data-slot="howTo">[How-to Question]</span>
+
+RULE (MANDATORY)
+
+Please answer this question as if you are allowed to use the prompts exactly as they are, except for replacing the input placeholders with the required inputs. You are not allowed to modify the prompts, add any new prompts, or use any prompts other than those included in this prompt bundle.
+
+TASK
+
+Please provide a step-by-step execution process that begins with setup and continues through to full completion, using all the prompts contained in the prompt bundle. Please write the response, showing how every single prompt is used.
+
+Each instruction must be written as if you are guiding the user live, in real time, while they are using their phone or computer.
+
+Please write the answer in the most spontaneous and natural sounding modern, everyday conversational Bengali as spoken in Kolkata, West Bengal, India that can be understood by an 21 year old but contains the international standards of language.
+Strict Rules:
+Must subtly reflect Kolkata conversational cadence through sentence rhythm and phrasing by using slightly formal, polite, and smoothly flowing sentence structures, with balanced pacing and no abrupt or overly casual wording — without slang, regional grammar, or loss of conservative authority.
+• Always use the formal “আপনি”, not the informal “তুমি.” The address is formal, but the tone should remain warm, conversational, and approachable.
+• The voice should be bold, direct, also should feel like a close friend and a trusted authority, speaking one-on-one with the reader in a natural, face-to-face style.</div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox3', this)">Copy Prompt</button>
+            </div>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#4</span></div>
+                <div class="prompt-preview" id="promptBox4" role="textbox" aria-readonly="true">You didn't show how all the prompts are used in your answer to the previous question. Please write the response again, showing how every single prompt is used.</div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox4', this)">Copy Prompt</button>
+            </div>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#5</span></div>
+                <div class="prompt-preview" id="promptBox5" role="textbox" aria-readonly="true">I would like to present your answer as a proposition for my audience in a PDF document. Please rewrite the answer in that format. You don't need to create a ready-to-use PDF file. Just provide the ready-to-use content so that I can copy and paste it into a PDF document.
+The word “proposition” was used only for our internal understanding, so please do not use that word in the content. Write the content from the reader’s perspective, addressing the reader directly.</div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox5', this)">Copy Prompt</button>
+            </div>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#6</span></div>
+                <div class="prompt-preview" id="promptBox6" role="textbox" aria-readonly="true">Write an opening and an ending for this content so that its central thesis is unmistakably clear.</div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox6', this)">Copy Prompt</button>
+            </div>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#7</span></div>
+                <div class="prompt-preview" id="promptBox7" role="textbox" aria-readonly="true">Rewrite the opening and ending so the central thesis of this content as proposition is unmistakable.</div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox7', this)">Copy Prompt</button>
+            </div>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#8</span></div>
+                <div class="prompt-preview" id="promptBox8" role="textbox" aria-readonly="true">The word “proposition” was used only for our internal understanding, so please do not use that word in the content. Write the content from the reader’s perspective, addressing the reader directly.</div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox8', this)">Copy Prompt</button>
+            </div>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#9</span></div>
+                <div class="prompt-preview" id="promptBox9" role="textbox" aria-readonly="true">Maintaining this tone and point of view, and incorporating the opening and ending provided above, please write the complete content so that it is ready for publication. You don't need to create a ready-to-use PDF; just provide the final, ready-to-use content that I can copy and paste into a PDF document.</div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox9', this)">Copy Prompt</button>
+            </div>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#10</span></div>
+                <div class="prompt-preview" id="promptBox10" role="textbox" aria-readonly="true">এই কনটেন্টটা review and rate করো। Should I lock it?</div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox10', this)">Copy Prompt</button>
+            </div>
+            <div class="output-card prompt-card">
+                <div class="output-header"><span class="output-title">Prompt#11</span></div>
+                <div class="prompt-preview" id="promptBox11" role="textbox" aria-readonly="true">Read and review this content and answer me the following question:
+
+এই কনটেন্টটা পড়ার পর একজন রীডারের মনে কোন কোন প্রশ্ন জাগতে পারে?
+এই মেথডটা এক্সিকিউট করতে গিয়ে একজন ইউজার কোন কোন সমস্যার সম্মুখীন হতে পারে, সেই সমস্যায় পড়লে ইউজার কোন প্রশ্নের উত্তর খুঁজবে?
+
+content-এর flow অনুসরণ করে সম্ভাব্য প্রশ্নগুলো আলাদা করে লিস্ট করো.
+
+CONTENT:
+
+<span class="placeholder-token" data-slot="content">[Content]</span></div>
+                <button class="copy-btn" type="button" onclick="copyPrompt('promptBox11', this)">Copy Prompt</button>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </footer>
+    </main>
+
+    <script>
+        function updatePrompt() {
+            const howToQuestion = document.getElementById('inputHowTo').value;
+            const content = document.getElementById('inputContent').value;
+            document.querySelectorAll('[data-slot="howTo"]').forEach((node) => {
+                node.textContent = howToQuestion || '[How-to Question]';
+                node.classList.toggle('filled', Boolean(howToQuestion));
+            });
+            document.querySelectorAll('[data-slot="content"]').forEach((node) => {
+                node.textContent = content || '[Content]';
+                node.classList.toggle('filled', Boolean(content));
+            });
+        }
+
+        async function copyPrompt(boxId, button) {
+            const box = document.getElementById(boxId);
+            const originalText = button.textContent;
+            const text = box.innerText;
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (error) {
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(box);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('copy');
+                selection.removeAllRanges();
+            }
+            button.textContent = '✓ Copied!';
+            button.classList.add('copied');
+            window.setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('copied');
+            }, 2000);
+        }
+
+        document.getElementById('inputHowTo').addEventListener('input', updatePrompt);
+        document.getElementById('inputContent').addEventListener('input', updatePrompt);
+        updatePrompt();
+    </script>
+</body>
+</html>

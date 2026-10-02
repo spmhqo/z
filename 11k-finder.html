@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11K and A Content Finder</title>
+    <link rel="icon" href="spm.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #faf9f6;
+            --surface-color: #ffffff;
+            --border-color: #e2dfdc;
+            --border-focus: #706b63;
+            --text-main: #2c2a29;
+            --text-muted: #6e6963;
+            --accent: #1a1918;
+            --accent-hover: #383532;
+            --success: #2e7d32;
+            --header-color: #4338ca;
+            --font-serif: 'Newsreader', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .document-container {
+            max-width: 760px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 48px 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Header Styles */
+        .doc-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 30px;
+        }
+
+        .doc-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--header-color);
+            margin-bottom: 8px;
+        }
+
+        .doc-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Section Layout */
+        .section-heading {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 36px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .doc-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .doc-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            background: var(--surface-color);
+            box-shadow: 0 0 0 3px rgba(112, 107, 99, 0.1);
+        }
+
+        /* Output Box Styling */
+        .output-card {
+            margin-top: 30px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .output-title {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .prompt-preview {
+            width: 100%;
+            min-height: 250px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            resize: vertical;
+            white-space: pre-wrap;
+            margin-bottom: 16px;
+        }
+
+        .copy-btn {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        /* Footer */
+        .doc-footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            body {
+                padding: 12px 8px;
+            }
+            .document-container {
+                padding: 24px 16px;
+            }
+            .doc-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="document-container">
+        
+        <!-- Header -->
+        <header class="doc-header">
+            <h1 class="doc-title">11K and A Content Finder</h1>
+            <p class="doc-subtitle">(from a keyword.)</p>
+        </header>
+
+        <!-- Dynamic Inputs Section -->
+        <section>
+            <h2 class="section-heading">2 Multiline Dynamic Input Fields</h2>
+            
+            <div class="input-group">
+                <label class="input-label" for="inputNiche">[niche]</label>
+                <textarea id="inputNiche" class="doc-input" placeholder="Enter niche..." oninput="updateAllPrompts()">digital product business</textarea>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="inputKeyword">[KEYWORD]</label>
+                <textarea id="inputKeyword" class="doc-input" placeholder="Enter keyword..." oninput="updateAllPrompts()">how to build digital products</textarea>
+            </div>
+        </section>
+
+        <!-- Prompt Boxes Section -->
+        <section>
+            <h2 class="section-heading">Prompt Boxes (00 to 11)</h2>
+            
+            <!-- Prompt Box 00 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#00 Definitions</span></div>
+                <textarea id="promptBox0" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox0', this)">Copy Prompt #00</button>
+            </div>
+
+            <!-- Prompt Box 01 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#01 Frustration Search - The Frustration Keywords</span></div>
+                <textarea id="promptBox1" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox1', this)">Copy Prompt #01</button>
+            </div>
+
+            <!-- Prompt Box 02 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#02 Skeptic Search - The Skeptic Keywords</span></div>
+                <textarea id="promptBox2" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox2', this)">Copy Prompt #02</button>
+            </div>
+
+            <!-- Prompt Box 03 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#03 Comparison Search - The Versus Keywords</span></div>
+                <textarea id="promptBox3" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox3', this)">Copy Prompt #03</button>
+            </div>
+
+            <!-- Prompt Box 04 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#04 Why Search - The Why Keywords</span></div>
+                <textarea id="promptBox4" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox4', this)">Copy Prompt #04</button>
+            </div>
+
+            <!-- Prompt Box 05 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#05 Mistake Search - The Mistake Keywords</span></div>
+                <textarea id="promptBox5" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox5', this)">Copy Prompt #05</button>
+            </div>
+
+            <!-- Prompt Box 06 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#06 Conversation - The Conversation Keywords</span></div>
+                <textarea id="promptBox6" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox6', this)">Copy Prompt #06</button>
+            </div>
+
+            <!-- Prompt Box 07 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#07 Alternative - The Alternative Keywords</span></div>
+                <textarea id="promptBox7" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox7', this)">Copy Prompt #7</button>
+            </div>
+
+            <!-- Prompt Box 08 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#08 Warning Search - The Warning Keywords</span></div>
+                <textarea id="promptBox8" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox8', this)">Copy Prompt #8</button>
+            </div>
+
+            <!-- Prompt Box 09 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#09 Cost Search - The Price & Value Keywords</span></div>
+                <textarea id="promptBox9" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox9', this)">Copy Prompt #9</button>
+            </div>
+
+            <!-- Prompt Box 10 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#10 Specific Result Search - The Specific Outcome Keywords</span></div>
+                <textarea id="promptBox10" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox10', this)">Copy Prompt #10</button>
+            </div>
+
+            <!-- Prompt Box 11 -->
+            <div class="output-card">
+                <div class="output-header"><span class="output-title">Prompt#11</span></div>
+                <textarea id="promptBox11" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyBox('promptBox11', this)">Copy Prompt #11</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </footer>
+
+    </div>
+
+    <script>
+        // Templates for all 12 prompt boxes (00 through 11)
+        const t0 = `Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 understanding-based search keywords for the [niche] market. These are the exact phrases typed by people who have heard about, encountered, or become curious about [niche], but do not yet have a clear understanding of what it actually is, what it means, what it does, or how it works. They are not yet trying to solve a specific problem, compare options, assess the cost, or achieve a specific result. Their immediate need is to build a basic mental model of the subject before deciding what to do with it.
+
+Use these structural patterns: "what is [niche]," "what exactly is [niche]," "what does [niche] mean," "what is [niche] really," "how does [niche] work," "what does [niche] do," "what is [niche] used for," "how does [niche] work for beginners," "what can [niche] do," "what are the basics of [niche]," "what is the difference between [niche] and [related concept]," "what [niche] actually means," "what you need to know about [niche]."
+
+For each of the 25 keywords: write the exact search phrase as a real person would type it, identify in two or three words the specific understanding they are seeking, and write one sentence on the content angle that would give them the clearest possible understanding of [niche] and naturally prepare them for deeper questions. Avoid keywords where the searcher is primarily looking for a solution, comparison, review, risk assessment, price, or specific outcome. Format as a numbered list of 25.`;
+
+        const t1 = `Prompt#01 Frustration Search - The Frustration Keywords
+What people actually type when something isn't working and they're fed up
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 frustration-based search keywords for the [niche] market. These are the short, raw phrases people type when they are stuck, fed up, or have tried the standard advice and it failed them. Not polished queries — the kind of thing someone types in a moment of genuine irritation. Use these structural patterns as your guide: "[niche] not working," "why is [niche] so hard," "[niche] still not working," "tried everything for [niche]," "why am I not getting results with [niche]," "[niche] stopped working," "can't figure out [niche]," "what am I doing wrong with [niche]." For each of the 25 keywords: write the exact phrase as a real person would type it, identify in two or three words the specific frustration behind it, and write one sentence on the content angle that would completely satisfy this search and turn the frustrated reader into a loyal follower. Format as a numbered list of 25.`;
+
+        const t2 = `Prompt#02 Skeptic Search - The Skeptic Keywords
+Does it actually work? Is it worth it? The searches people make before they commit
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 skeptic-search keywords for the [niche] market. These are the exact phrases typed by people who have heard about [niche], are genuinely interested, but are not yet convinced it will work for them specifically. They want proof, honest reviews, and second opinions before they commit. Use these structural patterns: "does [niche] really work," "is [niche] worth it," "honest [niche] review," "is [niche] a scam," "[niche] real results," "truth about [niche]," "[niche] pros and cons," "is [niche] legit," "[niche] before and after real people," "what nobody tells you about [niche]." For each of the 25 keywords: write the exact search phrase, identify the specific doubt or fear driving that search in one sentence, and rate its buyer intent once that doubt is resolved as medium, high, or very high. The skeptic who gets convinced becomes the most loyal buyer. Format as a numbered list of 25.`;
+
+        const t3 = `Prompt#03 Comparison Search - The Versus Keywords
+X vs Y searches — high volume, high intent, and perfectly built for argument content
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 comparison search keywords for the [niche] market. These are the "X vs Y" and "which is better" phrases typed by people who have already decided to act — they just need help choosing between two specific options. This is the highest commercial-intent keyword category because the searcher is at the decision stage, not the awareness stage. Use these structural patterns: "[option A] vs [option B]," "best [niche] method for beginners," "difference between [approach A] and [approach B]," "[niche option A] or [niche option B]," "[niche approach] vs [alternative approach]," "which [niche method] is better," "[niche tool A] vs [niche tool B] comparison." For each of the 25 keywords: write the exact comparison phrase, identify who is most likely searching it as beginner, intermediate, or experienced, and write one sentence on the single deciding factor the content must address to convert this searcher. Format as a numbered list of 25.`;
+
+        const t4 = `Prompt#04 Why Search - The Why Keywords
+The "why is this happening to me" searches — emotionally loaded and deeply revealing
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 "why" search keywords for the [niche] market. These are the exact phrases people type when they want to understand the reason behind something that is happening to them — confusion, frustration, or a result they cannot explain. "Why" questions are the most emotionally loaded keyword type in any niche because the person is looking for an explanation that validates their experience. Google featured snippets, People Also Ask boxes, and AI answer overviews heavily favor "why" questions with a clear direct answer. Use these structural patterns: "why is [niche] not working for me," "why does [niche problem] happen," "why is [niche] so difficult," "why am I not seeing results with [niche]," "why does [niche] work for some people and not others," "why is [niche] so expensive," "why do experts disagree about [niche]." For each of the 25 keywords: write the exact "why" phrase, name the primary emotion driving it in one word, and write the opening sentence of the answer that would win the Google featured position. Format as a numbered list of 25.`;
+
+        const t5 = `Prompt#05 Mistake Search - The Mistake Keywords
+What am I doing wrong? The searches that signal someone ready to change everything
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 mistake-based search keywords for the [niche] market. These are the exact phrases typed by people who suspect they have been doing something wrong, following bad advice, or wasting time on an approach that does not work. The person searching these keywords is in a state of maximum openness — their current method has failed and they are ready to hear something completely different. This makes mistake keywords among the highest-converting in any niche. Use these structural patterns: "[niche] mistakes to avoid," "biggest [niche] mistakes," "common [niche] mistakes beginners make," "why [niche] doesn't work for most people," "am I doing [niche] wrong," "what I wish I knew before starting [niche]," "[niche] mistakes that kill results," "stop doing this with [niche]," "wrong way to do [niche]." For each of the 25 keywords: write the exact phrase, estimate search volume as low, medium, high, or very high, and write one sentence naming the single most important mistake this audience is making that the content must address head-on. Format as a numbered list of 25.`;
+
+        const t6 = `Prompt#06 Conversation - The Conversation Keywords
+What people type when they want to find others who feel exactly the same way
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 conversation-based search keywords for the [niche] market. These are the exact phrases people type when they are looking for others who share their experience — not looking for expert advice, but for validation, community, and the feeling that they are not alone. These searches come from Reddit, forums, Facebook groups, and YouTube comment sections made into search queries. They are massively underserved by traditional content and produce the most loyal, most sharing audiences in any niche because finding content that mirrors your private experience creates an instant bond. Use these structural patterns: "is it normal to [niche experience]," "does anyone else struggle with [niche]," "why do I feel [emotion] about [niche]," "am I the only one who [niche experience]," "anyone else find [niche] [adjective]," "I hate [niche aspect] is that just me," "be honest about [niche]," "real talk about [niche]," "nobody talks about [niche experience]," "things people don't say about [niche]." For each of the 25 keywords: write the exact conversational phrase as someone would actually type it, identify the specific shared experience or emotion it represents, and write one sentence on why content built around this keyword produces disproportionate shares and return visits compared to informational content. Format as a numbered list of 25.`;
+
+        const t7 = `Prompt#07 Alternative - The Alternative Keywords
+People who tried the obvious solution, found it lacking, and are actively looking for something better
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 alternative-search keywords for the [niche] market. These are the exact phrases typed by people who have already tried the obvious, mainstream approach to [niche] and found it lacking — too expensive, too complicated, too slow, or simply wrong for their situation. They are not beginners. They are educated, frustrated, and actively searching for a different path. This is the warmest traffic that exists outside of people who already know your name — they have already done the research, already tried the standard solution, and are already in motion looking for something better. Almost no creators target this audience because it requires acknowledging that the mainstream approach has limits. Use these structural patterns: "alternative to [mainstream niche approach]," "[niche] but without [specific downside]," "instead of [standard niche method]," "better way to [niche goal]," "[niche approach] not working try this," "why I stopped [mainstream niche method]," "[niche] without [common requirement]," "easier alternative to [niche standard]," "what to do instead of [niche approach]," "[niche] for people who hate [common aspect]." For each of the 25 keywords: write the exact phrase, identify in one sentence what failed approach the searcher is moving away from, and write one sentence on why this keyword converts faster than any beginner keyword in the same niche. Format as a numbered list of 25.`;
+
+        const t8 = `Prompt#08 Warning Search - The Warning Keywords
+Before I try this — the cautious high-intent searches that convert like crazy
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 warning and caution-based search keywords for the [niche] market. These are the exact phrases typed by people who are seriously considering [niche] and want to know the risks, downsides, red flags, and things nobody warns you about before they fully commit. Warning searches signal high intent — a casual person does not bother researching cautions. Content that honestly addresses warnings converts at exceptional rates because trust is the scarcest resource in any niche and honesty about the negatives is the fastest way to earn it. Use these structural patterns: "[niche] side effects," "is [niche] safe," "[niche] dangers," "downsides of [niche]," "things to know before starting [niche]," "[niche] risks," "what they don't tell you about [niche]," "[niche] warning signs," "is [niche] bad for you," "when [niche] goes wrong." For each of the 25 keywords: write the exact phrase, identify the specific fear or concern driving that search in one sentence, and describe the honest content angle that addresses the concern fully while naturally moving the reader toward informed action. Format as a numbered list of 25.`;
+
+        const t9 = `Prompt#09 Cost Search - The Price & Value Keywords
+What will this cost me? The searches that sit right at the moment of financial decision
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 cost and value search keywords for the [niche] market. These are the exact phrases typed by people at the critical moment just before a financial or time commitment — they need to know what [niche] will cost them in money, time, or effort before they decide. High intent, high conversion, because the question of cost only arises when someone is genuinely considering moving forward. Use these structural patterns: "how much does [niche] cost," "is [niche] expensive," "[niche] on a budget," "cheapest way to do [niche]," "how much time does [niche] take," "free vs paid [niche]," "is [niche] worth the money," "how to do [niche] without spending a lot," "[niche] cost per month," "is [niche] affordable," "how to start [niche] with no money," "what does [niche] actually cost." For each of the 25 keywords: write the exact phrase, identify whether the primary concern is money, time, or effort, and write one sentence on the specific value argument the content must make to move this person from cost concern to committed action. Format as a numbered list of 25.`;
+
+        const t10 = `Prompt#10 Specific Result Search - The Specific Outcome Keywords
+Exactly how much, exactly how fast, exactly what result — the most precise and purchase-ready searches
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Generate 25 specific-outcome search keywords for the [niche] market. These are the exact phrases typed by people who want a precise, measurable, named result — not general information or vague improvement. Specific-outcome keywords are the most commercially valuable in any niche for one reason: the more specific the search, the more serious the intent. A person typing a broad term is browsing. A person typing an exact desired outcome is ready to act the moment the right content appears. Use these structural patterns: "how to [specific measurable result] with [niche]," "[niche] to achieve [specific outcome] in [timeframe]," "exact [niche] plan for [named result]," "how I [specific result] using [niche]," "[niche] that actually gets [specific result]," "step by step [niche] for [named outcome]," "proven [niche] method for [specific goal]." For each of the 25 keywords: write the exact specific-outcome phrase, name the precise result the searcher wants in three words or fewer, and write one sentence on why this keyword is both easier to rank for and easier to monetize than a broad equivalent. Format as a numbered list of 25.`;
+
+        const t11 = `Prompt#11:
+
+Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Analyze the search keyword "[KEYWORD]" and determine the exact content intent behind it.
+
+TASK
+
+Identify what the searcher actually wants to understand by searching this keyword, what question they are really asking, and what the content must accomplish to fully satisfy that search intent.
+
+Then create a content framework for writing the ideal answer.
+
+For your analysis, distinguish between:
+
+1. Search Intent
+
+What is the searcher explicitly looking for?
+
+2. Underlying Question
+
+What is the real question behind the search query?
+
+3. Content Intent
+
+What must the content help the reader understand, realize, or become clear about?
+
+4. Searcher Starting Point
+
+What does the reader most likely already know, assume, or not know when they make this search?
+
+5. Required Understanding
+
+What must the reader understand by the end of the content for the search to be fully satisfied?
+
+6. Content Boundary
+
+What should this content explain, and what should it deliberately leave for deeper or separate content?
+
+7. Content Framework
+
+Create the logical sequence of sections or questions that the content should follow to satisfy the search intent completely.
+
+The framework should move naturally from the reader's initial question toward complete understanding. Do not add sections merely because they are commonly used in articles. Every section must exist because it is necessary to satisfy the searcher's intent.
+
+IMPORTANT
+
+Do not write the article.
+
+Do not suggest SEO keywords.
+
+Do not optimize for word count.
+
+Do not introduce unrelated information.
+
+Do not assume that the reader wants a solution, product, comparison, purchase, or specific outcome unless the keyword itself indicates that intent.
+
+Focus entirely on determining what the searcher needs to understand and how the content should logically unfold to provide that understanding.
+
+SEARCH KEYWORD:
+
+[KEYWORD]
+
+Return the analysis in this format:
+
+Search Intent:
+[Answer]
+
+Underlying Question:
+[Answer]
+
+Content Intent:
+[Answer]
+
+Searcher Starting Point:
+[Answer]
+
+Required Understanding:
+[Answer]
+
+Content Boundary:
+[Answer]
+
+Content Framework:
+
+1. [Section/question]
+   Purpose:
+   What the reader should understand:
+
+2. [Section/question]
+   Purpose:
+   What the reader should understand:
+
+Continue until the search intent is completely satisfied.`;
+
+        // Function to update prompts dynamically as the user types
+        function updateAllPrompts() {
+            const nicheVal = document.getElementById('inputNiche').value;
+            const keywordVal = document.getElementById('inputKeyword').value;
+
+            // Update templates 0 through 10 using [niche]
+            document.getElementById('promptBox0').value = t0.replaceAll('[niche]', nicheVal);
+            document.getElementById('promptBox1').value = t1.replaceAll('[niche]', nicheVal);
+            document.getElementById('promptBox2').value = t2.replaceAll('[niche]', nicheVal);
+            document.getElementById('promptBox3').value = t3.replaceAll('[niche]', nicheVal);
+            document.getElementById('promptBox4').value = t4.replaceAll('[niche]', nicheVal);
+            document.getElementById('promptBox5').value = t5.replaceAll('[niche]', nicheVal);
+            document.getElementById('promptBox6').value = t6.replaceAll('[niche]', nicheVal);
+            document.getElementById('promptBox7').value = t7.replaceAll('[niche]', nicheVal);
+            document.getElementById('promptBox8').value = t8.replaceAll('[niche]', nicheVal);
+            document.getElementById('promptBox9').value = t9.replaceAll('[niche]', nicheVal);
+            document.getElementById('promptBox10').value = t10.replaceAll('[niche]', nicheVal);
+
+            // Update template 11 using [KEYWORD]
+            document.getElementById('promptBox11').value = t11.replaceAll('[KEYWORD]', keywordVal);
+        }
+
+        // Copy functionality with visual feedback
+        function copyBox(elementId, btnElement) {
+            const outputBox = document.getElementById(elementId);
+            const originalText = btnElement.textContent;
+
+            outputBox.select();
+            outputBox.setSelectionRange(0, 99999);
+
+            try {
+                document.execCommand('copy');
+                btnElement.textContent = '✓ Copied!';
+                btnElement.classList.add('copied');
+
+                window.getSelection().removeAllRanges();
+
+                setTimeout(() => {
+                    btnElement.textContent = originalText;
+                    btnElement.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        }
+
+        // Initialize on page load
+        window.onload = updateAllPrompts;
+    </script>
+</body>
+</html>
