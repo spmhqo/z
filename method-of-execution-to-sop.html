@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f3ee">
+    <title>Method of Execution to SOP</title>
+    <link rel="icon" href="spm.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f5f3ee;
+            --surface: #fff;
+            --surface-soft: #faf9f6;
+            --border: #e5e0d8;
+            --border-strong: #c9c1b6;
+            --ink: #272624;
+            --muted: #706b63;
+            --accent: #3730a3;
+            --accent-dark: #24205f;
+            --success: #28713b;
+            --shadow: 0 12px 36px rgba(38, 34, 28, .055);
+            --serif: 'Newsreader', Georgia, serif;
+            --sans: 'Plus Jakarta Sans', Arial, sans-serif;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            padding: 36px 18px;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: var(--sans);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        .page {
+            width: min(100%, 900px);
+            margin: 0 auto;
+            padding: 44px 48px 28px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+        }
+        .page-header {
+            padding: 0 8px 28px;
+            margin-bottom: 28px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        h1 {
+            margin: 0;
+            color: var(--accent);
+            font: 600 clamp(2rem, 5vw, 2.8rem)/1.12 var(--serif);
+            letter-spacing: -.025em;
+        }
+        .subtitle {
+            margin: 9px 0 0;
+            color: var(--muted);
+            font-size: .95rem;
+        }
+        .prompt-card {
+            margin: 0 0 22px;
+            padding: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            box-shadow: 0 3px 14px rgba(38, 34, 28, .025);
+        }
+        .prompt-heading {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin: 0 0 17px;
+            font: 600 1.38rem/1.2 var(--serif);
+        }
+        .prompt-number {
+            color: var(--accent);
+            font: 700 .75rem/1 var(--sans);
+            letter-spacing: .1em;
+        }
+        .field { margin: 0 0 15px; }
+        .field:last-of-type { margin-bottom: 18px; }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #46433f;
+            font-size: .83rem;
+            font-weight: 600;
+        }
+        .single-line-input {
+            display: block;
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 13px;
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            background: var(--surface-soft);
+            color: var(--ink);
+            font: 400 .93rem/1.4 var(--sans);
+            transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+        }
+        .single-line-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--surface);
+            box-shadow: 0 0 0 3px rgba(55, 48, 163, .11);
+        }
+        .preview-label {
+            margin: 0 0 7px;
+            color: var(--muted);
+            font-size: .77rem;
+            font-weight: 700;
+            letter-spacing: .055em;
+            text-transform: uppercase;
+        }
+        .preview {
+            min-height: 160px;
+            max-height: 430px;
+            overflow: auto;
+            margin: 0 0 13px;
+            padding: 15px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface-soft);
+            color: #34312e;
+            font: 400 .88rem/1.65 var(--sans);
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+        .actions { display: flex; justify-content: flex-end; }
+        .copy-btn {
+            min-height: 40px;
+            padding: 9px 16px;
+            border: 0;
+            border-radius: 7px;
+            background: var(--accent-dark);
+            color: #fff;
+            font: 600 .83rem/1 var(--sans);
+            cursor: pointer;
+            transition: background .18s ease, transform .12s ease;
+        }
+        .copy-btn:hover { background: var(--accent); }
+        .copy-btn:active { transform: translateY(1px); }
+        .copy-btn.copied { background: var(--success); }
+        .copy-btn:focus-visible { outline: 3px solid rgba(55, 48, 163, .3); outline-offset: 3px; }
+        .page-footer {
+            margin-top: 34px;
+            padding: 18px 8px 0;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            text-align: center;
+            font-size: .79rem;
+        }
+        @media (max-width: 640px) {
+            body { padding: 12px 8px; }
+            .page { padding: 28px 16px 20px; border-radius: 12px; }
+            .page-header { padding-bottom: 22px; }
+            .prompt-card { padding: 18px 15px; }
+            .prompt-heading { font-size: 1.25rem; }
+            .preview { min-height: 180px; font-size: .82rem; }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <header class="page-header">
+            <h1>Method of Execution to SOP</h1>
+            <p class="subtitle">(Pro APP)</p>
+        </header>
+
+        <section class="prompt-card" aria-labelledby="prompt1-heading">
+            <h2 class="prompt-heading" id="prompt1-heading"><span class="prompt-number">PROMPT #1</span></h2>
+            <div class="field">
+                <label for="p1-document">Uploaded document or document content</label>
+                <input class="single-line-input" id="p1-document" type="text" placeholder="[uploaded document]" autocomplete="off">
+            </div>
+            <p class="preview-label">Prompt preview</p>
+            <pre class="preview" id="p1-preview"></pre>
+            <div class="actions"><button class="copy-btn" type="button" data-copy="p1-preview">Copy Prompt #1</button></div>
+        </section>
+
+        <section class="prompt-card" aria-labelledby="prompt2-heading">
+            <h2 class="prompt-heading" id="prompt2-heading"><span class="prompt-number">PROMPT #2</span></h2>
+            <p class="preview-label">Prompt</p>
+            <pre class="preview" id="p2-preview"></pre>
+            <div class="actions"><button class="copy-btn" type="button" data-copy="p2-preview">Copy Prompt #2</button></div>
+        </section>
+
+        <section class="prompt-card" aria-labelledby="prompt3-heading">
+            <h2 class="prompt-heading" id="prompt3-heading"><span class="prompt-number">PROMPT #3</span></h2>
+            <p class="preview-label">Prompt</p>
+            <pre class="preview" id="p3-preview"></pre>
+            <div class="actions"><button class="copy-btn" type="button" data-copy="p3-preview">Copy Prompt #3</button></div>
+        </section>
+
+        <section class="prompt-card" aria-labelledby="prompt4-heading">
+            <h2 class="prompt-heading" id="prompt4-heading"><span class="prompt-number">PROMPT #4</span></h2>
+            <p class="preview-label">Prompt</p>
+            <pre class="preview" id="p4-preview"></pre>
+            <div class="actions"><button class="copy-btn" type="button" data-copy="p4-preview">Copy Prompt #4</button></div>
+        </section>
+
+        <footer class="page-footer">
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </footer>
+    </main>
+
+    <script>
+        const promptTemplates = {
+            'p1-preview': `Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Please review the uploaded document. It presents a Method of Execution in the form of “what must be done to produce/originate the result.”
+
+TASK
+
+Answer the following questions:
+
+1. What does it produce/originate?
+2. What are the inputs, raw materials, or resources from which the result is produced/originated?
+3. How does the result occur? Explain the Mechanism of Occurrence.
+4. What type of audience is this result and Method of Execution intended for?
+5. How does the result occur for the user? Describe, in simple user-facing language, what the user does and what happens as a result, from the first step to the final result.
+
+Uploaded document: [uploaded document]`,
+            'p2-preview': `Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Create a one-page, user-facing Standard Operating Procedure (SOP) for producing the result one at a time. Include the required inputs, the actions the user needs to take, and the final output.`,
+            'p3-preview': `পুরো SOP-টি স্বাভাবিক বাংলায় লিখুন`,
+            'p4-preview': `এটিকে আরও একেবারে “কাজ করুন → ফল দেখুন” ধরনের অত্যন্ত সংক্ষিপ্ত ব্যবহারকারী নির্দেশিকা হিসেবেও সাজিয়ে দাও`
+        };
+
+        function updateAllPrompts() {
+            for (const [previewId, text] of Object.entries(promptTemplates)) {
+                document.getElementById(previewId).textContent = text;
+            }
+        }
+
+        async function copyPrompt(button) {
+            const preview = document.getElementById(button.dataset.copy);
+            const originalLabel = button.textContent;
+            try {
+                await navigator.clipboard.writeText(preview.textContent);
+            } catch (error) {
+                const range = document.createRange();
+                range.selectNodeContents(preview);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('copy');
+                selection.removeAllRanges();
+            }
+            button.textContent = '✓ Copied!';
+            button.classList.add('copied');
+            window.setTimeout(() => {
+                button.textContent = originalLabel;
+                button.classList.remove('copied');
+            }, 1800);
+        }
+
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', () => copyPrompt(button));
+        });
+        updateAllPrompts();
+    </script>
+</body>
+</html>
