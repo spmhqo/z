@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PGP Code — Reusable Prompt Templates</title>
+  <link rel="icon" href="spm.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #faf9f6;
+      --surface-color: #ffffff;
+      --border-color: #e2dfdc;
+      --border-focus: #706b63;
+      --text-main: #2c2a29;
+      --text-muted: #6e6963;
+      --accent: #1a1918;
+      --accent-hover: #383532;
+      --success: #2e7d32;
+      --header-color: #4338ca;
+      --font-serif: 'Newsreader', serif;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-sans); background: var(--bg-color); color: var(--text-main); line-height: 1.6; padding: 40px 20px; -webkit-font-smoothing: antialiased; }
+    .document-container { max-width: 820px; margin: 0 auto; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 48px 40px; box-shadow: 0 4px 24px rgba(0,0,0,.02); }
+    .doc-header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 30px; }
+    .doc-title { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 600; letter-spacing: -.02em; color: var(--header-color); margin-bottom: 8px; }
+    .doc-subtitle { font-size: .95rem; color: var(--text-muted); font-weight: 400; }
+    .section-heading { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: var(--accent); margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-color); }
+    .input-group { margin-bottom: 20px; }
+    .input-label { display: block; font-size: .9rem; font-weight: 500; color: var(--text-main); margin-bottom: 8px; }
+    .doc-input { width: 100%; padding: 12px 16px; font-family: var(--font-sans); font-size: .95rem; color: var(--text-main); background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; resize: vertical; min-height: 80px; transition: border-color .2s ease, box-shadow .2s ease; }
+    .doc-input:focus, .prompt-source:focus { outline: none; border-color: var(--border-focus); background: var(--surface-color); box-shadow: 0 0 0 3px rgba(112,107,99,.1); }
+    .prompt-source { min-height: 650px; }
+    .navigation { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 0 0 28px; }
+    .nav-link { display: inline-block; text-decoration: none; color: var(--accent); border: 1px solid var(--border-color); background: var(--bg-color); border-radius: 999px; padding: 8px 16px; font-size: .86rem; font-weight: 500; transition: background .2s ease, color .2s ease; }
+    .nav-link:hover, .nav-link:focus { background: var(--accent); color: #fff; }
+    .output-card { margin-top: 30px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; }
+    .output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .output-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--accent); }
+    .prompt-preview { width: 100%; min-height: 260px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 6px; padding: 16px; font-family: var(--font-sans); font-size: .9rem; color: var(--text-main); line-height: 1.5; resize: vertical; white-space: pre-wrap; margin-bottom: 16px; }
+    .copy-btn { background: var(--accent); color: #fff; border: none; padding: 10px 20px; font-size: .85rem; font-weight: 500; border-radius: 6px; cursor: pointer; transition: background .2s ease, transform .1s ease; }
+    .copy-btn:hover { background: var(--accent-hover); }
+    .copy-btn.copied { background: var(--success); }
+    .doc-footer { text-align: center; margin-top: 50px; font-size: .85rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 20px; }
+    @media (max-width: 640px) { body { padding: 12px 8px; } .document-container { padding: 24px 16px; } .doc-title { font-size: 1.8rem; } .output-card { padding: 16px; } }
+  </style>
+</head>
+<body>
+  <main class="document-container">
+    <header class="doc-header">
+      <h1 class="doc-title">PGP Code</h1>
+      <p class="doc-subtitle">(for reusable prompt templates.)</p>
+    </header>
+
+    <nav class="navigation" aria-label="Input fields navigation">
+      <a class="nav-link" href="#input-number-prompts">Number of Prompts</a>
+      <a class="nav-link" href="#input-number-manual">Number of Manual inputs</a>
+      <a class="nav-link" href="#input-page-header">Page Header</a>
+      <a class="nav-link" href="#input-page-subheader">Page Sub-Header</a>
+    </nav>
+
+    <section id="input-fields">
+      <h2 class="section-heading">Input Fields</h2>
+      <div class="input-group" id="input-number-prompts">
+        <label class="input-label" for="numberOfPrompts">Number of Prompts</label>
+        <textarea id="numberOfPrompts" class="doc-input" data-placeholder="[Number of Prompts]" oninput="updatePrompt()"></textarea>
+      </div>
+      <div class="input-group" id="input-number-manual">
+        <label class="input-label" for="numberOfManualInputs">Number of Manual inputs</label>
+        <textarea id="numberOfManualInputs" class="doc-input" data-placeholder="[Number of Manual inputs]" oninput="updatePrompt()"></textarea>
+      </div>
+      <div class="input-group" id="input-page-header">
+        <label class="input-label" for="pageHeader">Page Header</label>
+        <textarea id="pageHeader" class="doc-input" data-placeholder="[Page Header]" oninput="updatePrompt()"></textarea>
+      </div>
+      <div class="input-group" id="input-page-subheader">
+        <label class="input-label" for="pageSubHeader">Page Sub-Header</label>
+        <textarea id="pageSubHeader" class="doc-input" data-placeholder="[Page Sub-Header]" oninput="updatePrompt()"></textarea>
+      </div>
+    </section>
+
+    <section id="prompts">
+      <h2 class="section-heading">Prompts</h2>
+      <nav class="navigation" aria-label="Prompts navigation">
+        <a class="nav-link" href="#prompt-1">Create a similar HTML page</a>
+      </nav>
+      <article class="output-card" id="prompt-1">
+        <div class="output-header"><span class="output-title">Create a similar HTML page</span></div>
+        <label class="input-label" for="promptTemplate">Prompt</label>
+        <textarea id="promptTemplate" class="doc-input prompt-source" oninput="updatePrompt()" spellcheck="false">Please review the uploaded html page and create a new similar html page with the following [Number of Prompts] prompts and [Number of Manual inputs] multiline dynamic input fields. 
+
+Ensure that:
+1, Each prompt must have its own box. 
+2, Manual inputs must replace their respective [placeholder].
+
+RULE (MANDATORY)
+
+1, Give me all the codes, css, and scripts in a single code box.
+2, add: &lt;link rel="icon" href="spm.ico"&gt;
+3, Footer = Copyright &amp;copy; &lt;script&gt;document.write(new Date().getFullYear())&lt;/script&gt; Siva Prasad Mukherjee. All Rights Reserved.
+4, Please don't edit, add, and delete anything of the prompt, keep them as they are in the relevant prompt boxes.
+5, Create 2 navigations, one for input fields and the other for prompts. Please use their names, not numbers as navigation button texts.
+
+Page Header: [Page Header]
+Page Sub-Header: ([Page Sub-Header])
+
+[Number of Manual inputs] multiline dynamic input fields:</textarea>
+        <div class="output-header" style="margin-top:20px"><span class="output-title">Live Prompt Preview</span></div>
+        <textarea id="promptOutput" class="prompt-preview" readonly aria-label="Live prompt preview"></textarea>
+        <button class="copy-btn" type="button" onclick="copyPrompt()">Copy to Clipboard</button>
+      </article>
+    </section>
+
+    <footer class="doc-footer">
+      Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+    </footer>
+  </main>
+
+  <script>
+    function updatePrompt() {
+      const values = {
+        '[Number of Prompts]': document.getElementById('numberOfPrompts').value,
+        '[Number of Manual inputs]': document.getElementById('numberOfManualInputs').value,
+        '[Page Header]': document.getElementById('pageHeader').value,
+        '[Page Sub-Header]': document.getElementById('pageSubHeader').value
+      };
+      let prompt = document.getElementById('promptTemplate').value;
+      for (const [placeholder, value] of Object.entries(values)) {
+        prompt = prompt.split(placeholder).join(value);
+      }
+      document.getElementById('promptOutput').value = prompt;
+    }
+
+    async function copyPrompt() {
+      const output = document.getElementById('promptOutput');
+      const button = document.querySelector('.copy-btn');
+      try {
+        await navigator.clipboard.writeText(output.value);
+      } catch (error) {
+        output.focus();
+        output.select();
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+      }
+      const originalText = button.textContent;
+      button.textContent = '✓ Copied!';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove('copied');
+      }, 2000);
+    }
+    window.addEventListener('DOMContentLoaded', updatePrompt);
+  </script>
+</body>
+</html>
