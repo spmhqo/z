@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EZ Proposition Genie</title>
+    <link rel="icon" href="spm.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,700;0,900;1,700;1,900&family=Newsreader:ital,wght@0,400;0,600;1,400&family=Manrope:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #ffba38;
+            --primary-fixed: #ffdeac;
+            --on-primary: #432c00;
+            --surface: #16111f;
+            --surface-container-lowest: #110b1a;
+            --surface-container: #231d2c;
+            --on-surface: #eadef4;
+            --on-surface-variant: #ccc4cf;
+            --outline-variant: #4a454e;
+            --green: #00c853;
+            --font-headline: 'Noto Serif', serif;
+            --font-label: 'Manrope', sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-label);
+            color: var(--on-surface);
+            background: var(--surface);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* STARFIELD ANIMATION */
+        .stars, .stars-md {
+            position: absolute;
+            top: 0; left: 0;
+            border-radius: 50%;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        .stars {
+            width: 1px; height: 1px;
+            box-shadow: 1425px 308px #fff, 187px 125px #fff, 913px 467px #fff, 1680px 82px #fff, 432px 391px #fff, 1102px 37px #fff, 761px 242px #fff;
+            animation: drift 150s linear infinite;
+        }
+
+        .stars-md {
+            width: 2px; height: 2px;
+            box-shadow: 1312px 178px #fff, 456px 445px #fff, 1789px 112px #fff, 623px 323px #fff;
+            animation: drift 100s linear infinite;
+        }
+
+        @keyframes drift {
+            from { transform: translateY(0); }
+            to   { transform: translateY(-600px); }
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            padding: 80px 0 60px;
+            background: var(--surface-container-lowest);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header__title {
+            font-family: var(--font-headline);
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        /* DYNAMIC INPUT SECTION */
+        .input-section {
+            padding: 40px 0 20px;
+        }
+
+        .input-card {
+            background: var(--surface-container);
+            border: 1px solid var(--outline-variant);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .input-label {
+            display: block;
+            font-family: var(--font-headline);
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-style: italic;
+            margin-bottom: 12px;
+            color: var(--primary-fixed);
+        }
+
+        .main-textarea {
+            width: 100%;
+            min-height: 100px;
+            background: var(--surface-container-lowest);
+            border: 1px solid var(--outline-variant);
+            border-radius: 12px;
+            color: var(--on-surface);
+            padding: 15px;
+            font-family: var(--font-label);
+            font-size: 1rem;
+            resize: vertical;
+            overflow-y: hidden;
+        }
+
+        .main-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* PROMPT CARDS */
+        .prompt-card {
+            background: var(--surface-container);
+            border: 1px solid var(--outline-variant);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .prompt-number {
+            background: var(--primary);
+            color: var(--on-primary);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .prompt-title {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            min-height: 250px;
+            background: var(--surface-container-lowest);
+            border: 1px solid var(--outline-variant);
+            border-radius: 12px;
+            color: var(--on-surface);
+            padding: 20px;
+            font-family: var(--font-label);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+        }
+
+        .copy-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: var(--primary-fixed);
+            transform: scale(1.02);
+        }
+
+        .copy-button.copied {
+            background: var(--green);
+            color: #fff;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid var(--outline-variant);
+            color: var(--on-surface-variant);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header__title { font-size: 2rem; }
+            .prompt-card { padding: 20px; }
+            .prompt-textarea { min-height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+    <div class="stars-md"></div>
+
+    <header class="header">
+        <div class="container">
+            <h1 class="header__title">EZ Proposition Genie</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- DYNAMIC INPUT FIELDS -->
+        <section class="input-section">
+            <div class="input-card">
+                <label class="input-label">[execution plan]</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="Enter execution plan here..."></textarea>
+            </div>
+            <div class="input-card">
+                <label class="input-label">[Content]</label>
+                <textarea class="main-textarea dynamic-textarea" placeholder="Enter content here..."></textarea>
+            </div>
+        </section>
+
+        <!-- PROMPT 1 -->
+        <div class="prompt-card">
+            <div class="prompt-header">
+                <div class="prompt-number">1</div>
+                <h2 class="prompt-title">Prompt #1</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Review the uploaded pdf. Which method does it teach? What can be achieved if this method is executed?</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 2 -->
+        <div class="prompt-card">
+            <div class="prompt-header">
+                <div class="prompt-number">2</div>
+                <h2 class="prompt-title">Prompt #2</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>এই PDF-এর পদ্ধতি অনুসরণ করে আমার জন্য একটি বাস্তবসম্মত execution plan তৈরি করুন, যেখানে প্রতিদিনের experiment, content, audience interaction এবং monetization-এর কাজ থাকবে।</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 3 -->
+        <div class="prompt-card">
+            <div class="prompt-header">
+                <div class="prompt-number">3</div>
+                <h2 class="prompt-title">Prompt #3</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Answer the following prompt in Bengali (India). 
+ 
+Rules: 
+- Use only Bengali (India). 
+- Always address the reader as "আপনি". 
+- Never use "তুমি" or "তুই". 
+- Use a natural Kolkata-style conversational tone. 
+- Use natural, modern Bengali (India). 
+- Avoid Bangladeshi vocabulary, spelling, and expressions. 
+ 
+PROMPT 
+ 
+How To do this step?: 
+
+[execution plan]
+ 
+Please provide a step-by-step execution process, starting from setup and continuing through full completion.  
+Also include AI-assisted prompts for any steps that can be completed with the help of AI. 
+Each instruction must be written as if you are guiding the user live, in real time, while they are using their phone or computer. 
+ 
+At the end of your answer, please provide the standalone, reusable prompt template(s), using [placeholders], for all AI prompt(s) required to execute this step. These prompt template(s) should be fully reusable in a new chat for other niches, topics, or use cases simply by replacing the [placeholders] with the appropriate values. 
+ 
+Please write the answer in the most spontaneous and natural sounding modern, everyday conversational Bengali as spoken in Kolkata, West Bengal, India that can be understood by an 21 year old but contains the international standards of language. 
+ 
+Strict Rules: 
+ 
+Must subtly reflect Kolkata conversational cadence through sentence rhythm and phrasing by using slightly formal, polite, and smoothly flowing sentence structures, with balanced pacing and no abrupt or overly casual wording — without slang, regional grammar, or loss of conservative authority. 
+ 
+- Always use the formal “আপনি”, not the informal “তুমি.” The address is formal, but the tone should remain warm, conversational, and approachable. 
+- The voice should be bold, direct, also should feel like a close friend and a trusted authority, speaking one-on-one with the reader in a natural, face-to-face style.</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 5 -->
+        <div class="prompt-card">
+            <div class="prompt-header">
+                <div class="prompt-number">5</div>
+                <h2 class="prompt-title">Prompt #5</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Please repurpose the content (an execution plan) using the following framework:
+
+1. Introduction
+2. Why use the concept?
+3. How does the result occur?
+   (Mechanism of occurrence, based on the Originator’s activity)
+4. What must be done to produce/originate the result?
+   (Method of execution, based on the Originator’s activity)
+5. Task (To-Do), step-by-step
+6. What needs to be done in each step, and why?
+   (Based on the operating rule and what the step is intended to achieve in terms of the subjective/objective output)
+7. Notable points, if any
+8. Conclusion
+
+RULE (MANDATORY)
+
+1. Restructure and rewrite the content as a complete, final, ready-to-publish PDF that delivers the proposition through the complete resource contained in the PDF. Give the PDF a proper title and subtitle.
+
+   Write the PDF from the reader’s point of view, as if it is saying:
+
+   “এই কাজটি করার জন্য প্রয়োজনীয় সম্পূর্ণ resource এখানে।”
+
+2. Write the Introduction and Conclusion in a way that makes the content’s central thesis unmistakable.
+
+3. Create a Content Title based on what the content actually delivers, and a tagline that strengthens the promise of the title.
+
+4. Ensure that the rewritten content remains faithful to the original content. Do not invent concepts, mechanisms, rules, steps, resources, claims, or outcomes that are not supported by the provided content.
+
+CONTENT
+
+[Content]</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 6 -->
+        <div class="prompt-card">
+            <div class="prompt-header">
+                <div class="prompt-number">6</div>
+                <h2 class="prompt-title">Prompt #6</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly style="min-height: 100px;">https://spmhqo.github.io/3/title.html</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+        <!-- PROMPT 7 -->
+        <div class="prompt-card">
+            <div class="prompt-header">
+                <div class="prompt-number">7</div>
+                <h2 class="prompt-title">Prompt #7</h2>
+            </div>
+            <textarea class="prompt-textarea" readonly>Refine the content as a complete, final, ready-to-publish PDF that delivers the proposition through the complete resource contained in the PDF. Give the PDF a proper title and subtitle.
+
+Write the PDF from the reader’s point of view, as if it is saying:
+“এই কাজটি করার জন্য প্রয়োজনীয় সম্পূর্ণ resource এখানে।”</textarea>
+            <button class="copy-button" onclick="copyPrompt(this)">Copy Prompt</button>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Multi-line Dynamic Auto-Resize Logic for Textareas
+        const tx = document.querySelectorAll(".dynamic-textarea");
+        for (let i = 0; i < tx.length; i++) {
+            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+            tx[i].addEventListener("input", OnInput, false);
+        }
+
+        function OnInput() {
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        }
+
+        // Copy Prompt Logic
+        function copyPrompt(button) {
+            const textarea = button.previousElementSibling;
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                const originalText = button.innerHTML;
+                button.innerHTML = '&#10003; Copied!';
+                button.classList.add('copied');
+                
+                // Deselect Text
+                window.getSelection().removeAllRanges();
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+        }
+    </script>
+
+</body>
+</html>
