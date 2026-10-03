@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f8fc">
+    <title>Plan Your Content</title>
+    <link rel="icon" href="spm.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light;
+            --page: #f7f8fc;
+            --surface: #fff;
+            --surface-soft: #f2f3fa;
+            --border: #e2e4ed;
+            --ink: #252638;
+            --muted: #666a7c;
+            --accent: #4944b5;
+            --accent-dark: #343087;
+            --success: #247348;
+            --serif: 'Newsreader', Georgia, serif;
+            --sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+            --shadow: 0 12px 38px rgba(34, 37, 73, .06);
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            padding: clamp(12px, 3vw, 36px);
+            background: var(--page);
+            color: var(--ink);
+            font-family: var(--sans);
+            font-size: 16px;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+        .page-shell {
+            width: min(100%, 980px);
+            margin-inline: auto;
+            padding: clamp(20px, 5vw, 52px);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+        .page-header {
+            padding-bottom: clamp(24px, 4vw, 38px);
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        h1, h2, h3, h4 { line-height: 1.2; }
+        h1 {
+            margin: 0;
+            color: var(--accent);
+            font-family: var(--serif);
+            font-size: clamp(2.1rem, 7vw, 3.4rem);
+            font-weight: 600;
+            letter-spacing: -.035em;
+        }
+        .subtitle {
+            max-width: 650px;
+            margin: 14px auto 0;
+            color: var(--muted);
+            font-size: clamp(.95rem, 2.4vw, 1.08rem);
+        }
+        .content-section { margin-top: clamp(28px, 5vw, 48px); }
+        .section-heading {
+            margin: 0 0 18px;
+            font-family: var(--serif);
+            font-size: clamp(1.65rem, 4vw, 2.15rem);
+        }
+        .prompt-card, .answer-card {
+            min-width: 0;
+            margin-top: 22px;
+            padding: clamp(17px, 3.5vw, 30px);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: var(--surface);
+        }
+        .prompt-card { background: #fbfbfe; }
+        .card-heading {
+            margin: 0;
+            font-family: var(--serif);
+            font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+        }
+        .card-intro { margin: 7px 0 18px; color: var(--muted); }
+        .prompt-text {
+            width: 100%;
+            min-height: 600px;
+            display: block;
+            resize: vertical;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--ink);
+            font: 500 .92rem/1.8 var(--sans);
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+        .prompt-text:focus, .answer-input:focus {
+            outline: 3px solid rgba(73, 68, 181, .17);
+            border-color: var(--accent);
+        }
+        .answer-card { background: var(--surface-soft); }
+        .answer-card h3 { margin: 0; font-family: var(--serif); font-size: 1.4rem; }
+        .answer-hint { margin: 6px 0 14px; color: var(--muted); font-size: .92rem; }
+        .answer-input {
+            display: block;
+            width: 100%;
+            min-height: 190px;
+            padding: 14px;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+            color: var(--ink);
+            font: 400 1rem/1.65 var(--sans);
+        }
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            margin-top: 12px;
+            padding: 10px 17px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            font: 700 .9rem var(--sans);
+            cursor: pointer;
+            transition: background .18s ease, transform .18s ease;
+        }
+        .copy-btn:hover { background: var(--accent-dark); }
+        .copy-btn:active { transform: translateY(1px); }
+        .copy-btn:focus-visible { outline: 3px solid rgba(73, 68, 181, .3); outline-offset: 3px; }
+        .copy-btn.copied { background: var(--success); }
+        .reading-content { margin-top: 24px; }
+        .reading-content h3 { margin: 22px 0 8px; font-family: var(--serif); font-size: 1.35rem; }
+        .reading-content h4 { margin: 18px 0 5px; font-size: 1rem; }
+        .reading-content p { margin: 7px 0 12px; }
+        .reading-content ul, .reading-content ol { padding-left: 1.35rem; }
+        .reading-content li { margin: 4px 0; }
+        .callout {
+            margin: 16px 0;
+            padding: 15px 17px;
+            border-left: 4px solid var(--accent);
+            border-radius: 5px 10px 10px 5px;
+            background: #f2f1ff;
+        }
+        .table-wrap {
+            width: 100%;
+            margin: 14px 0 18px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        table { width: 100%; border-collapse: collapse; background: #fff; text-align: left; }
+        th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        th { background: #f1f1fa; font-size: .9rem; }
+        tr:last-child td { border-bottom: 0; }
+        .flow-list { list-style: none; padding: 0 !important; counter-reset: step; }
+        .flow-list li {
+            position: relative;
+            margin: 0 0 10px;
+            padding: 12px 14px 12px 48px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: #fff;
+        }
+        .flow-list li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 13px;
+            top: 11px;
+            width: 24px;
+            height: 24px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-size: .78rem;
+            font-weight: 700;
+        }
+        .footer {
+            margin-top: 42px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            text-align: center;
+            font-size: .84rem;
+        }
+        @media (max-width: 600px) {
+            body { padding: 8px; font-size: 15px; }
+            .page-shell { padding: 22px 14px; border-radius: 13px; }
+            .prompt-card, .answer-card { padding: 15px 12px; border-radius: 11px; }
+            .prompt-text { min-height: 700px; padding: 12px; font-size: .84rem; }
+            .answer-input { min-height: 170px; }
+            .copy-btn { width: 100%; }
+            th, td { padding: 10px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { transition-duration: .01ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <main class="page-shell">
+        <header class="page-header">
+            <h1>Plan Your Content</h1>
+            <p class="subtitle">Shape an intentional journey for your audience, connecting each question, idea, and piece of evidence to a meaningful destination.</p>
+        </header>
+
+        <section class="content-section" aria-labelledby="prompts-heading">
+            <h2 class="section-heading" id="prompts-heading">Content Prompts</h2>
+
+            <article class="prompt-card" aria-labelledby="prompt-one-heading">
+                <h3 class="card-heading" id="prompt-one-heading">Prompt #1: Journey</h3>
+                <p class="card-intro">Use this prompt to plan the content journey from intention to destination.</p>
+                <textarea class="prompt-text" id="prompt-one" readonly aria-label="Prompt 1 text">Content = Journey
+RULE (MANDATORY)
+
+Content should not give the conclusion directly; it should unfold questions and force the reader to the next question
+
+PREPARATION
+
+Intention = কেন এই যাত্রা শুরু হচ্ছে
+→ এই content তৈরি করার প্রয়োজনীয়তা আমি কোথায় দেখছি?
+Intent = Destination / গন্তব্য
+→ এই content পড়ার/দেখার শেষে পাঠকের মধ্যে ঠিক কী পরিবর্তন ঘটতে হবে?
+
+JOURNEY
+
+তারপর শুরু হচ্ছে Journey:
+Question = Next-turn finder / পরবর্তী মোড় খোঁজার mechanism
+→ আমরা এখন কোথায় আছি → এখান থেকে কোন মোড়ে যেতে হবে → এবং কেন ওই মোড়েই যেতে হবে?
+Logic = Route / পথ
+→ বর্তমান মোড় থেকে পরবর্তী মোড়ের মধ্যে প্রয়োজনীয় সংযোগ তৈরি করা।
+Supporting Elements = Route-এর প্রয়োজনীয় উপকরণ
+→ যে উপাদানগুলো Logic-এর তৈরি connection-কে দৃশ্যমান, বোধগম্য বা বিশ্বাসযোগ্য করে।
+যেমন:
+- উদাহরণ
+- বাস্তব ঘটনা
+- data
+- analogy
+- counter-example
+- evidence
+- explanation
+- comparison
+
+
+প্রতিটি মোড়ে একই engine আবার চালু হবে:
+
+Current Position
+↓
+Question
+→ এখন এখান থেকে কোথায় যেতে হবে এবং কেন?
+↓
+Logic
+→ কীভাবে এখান থেকে সেখানে যাওয়া যায়?
+↓
+Supporting Elements
+→ এই পথটি কেন গ্রহণযোগ্য/বোধ্য?
+↓
+Next Position
+↓
+Question
+→ ঠিক আছে, এখন এখান থেকে কোথায়?
+↓
+Logic
+↓
+Supporting Elements
+↓
+Next Position
+↓
+…
+↓
+Intent / Destination</textarea>
+                <button class="copy-btn" type="button" data-copy-target="prompt-one">Copy Prompt</button>
+
+                <section class="answer-card" aria-labelledby="answer-one-heading">
+                    <h3 id="answer-one-heading">Answer 1</h3>
+                    <p class="answer-hint">Write or paste your answer below. This field expands vertically as needed.</p>
+                    <textarea class="answer-input" id="answer-one" aria-label="Answer to prompt 1" placeholder="Your answer"></textarea>
+                    <button class="copy-btn" type="button" data-copy-target="answer-one">Copy Prompt</button>
+                </section>
+            </article>
+
+            <article class="prompt-card" aria-labelledby="prompt-two-heading">
+                <h3 class="card-heading" id="prompt-two-heading">Prompt #2: Explanation</h3>
+                <p class="card-intro">Use this prompt to clarify the parts that move content through its journey.</p>
+                <textarea class="prompt-text" id="prompt-two" readonly aria-label="Prompt 2 text">EXPLANATION
+
+Intention = কেন এই যাত্রা শুরু হচ্ছে (এই content তৈরি করার প্রয়োজনীয়তা আমি কোথায় দেখছি?) 
+Intent = Destination / গন্তব্য (এই content পড়ার/দেখার শেষে পাঠকের মধ্যে ঠিক কী পরিবর্তন ঘটতে হবে?) 
+Question → পথের পরবর্তী ধাপ খুলে দেয় = what comes next? (আমরা এখন কোথায় আছি → এখান থেকে কোন মোড়ে যেতে হবে → এবং কেন ওই মোড়েই যেতে হবে?)
+Logic (ধাপগুলোর মধ্যে সংযোগ তৈরি করে) = Route / সেই গন্তব্যে পৌঁছানোর পথ
+Supporting Elements (সংযোগকে দৃশ্যমান/বিশ্বাসযোগ্য করে) = সেই পথ অতিক্রম করার উপকরণ = Route-এর প্রয়োজনীয় vehicles/tools/evidence (প্রশ্ন, যুক্তি, উদাহরণ, বাস্তব ঘটনা, data, analogy, counter-example, evidence)
++ 
+Question → পথের পরবর্তী ধাপ খুলে দেয় = what comes next? (ঠিক আছে, এখন আমরা এখানে পৌঁছেছি। এখান থেকে পরবর্তী কোন মোড়ে যেতে হবে → এবং কেন?)
+Logic (ধাপগুলোর মধ্যে সংযোগ তৈরি করে) = Route / সেই গন্তব্যে পৌঁছানোর পথ
+Supporting Elements (সংযোগকে দৃশ্যমান/বিশ্বাসযোগ্য করে) = সেই পথ অতিক্রম করার উপকরণ = Route-এর প্রয়োজনীয় vehicles/tools/evidence (প্রশ্ন, যুক্তি, উদাহরণ, বাস্তব ঘটনা, data, analogy, counter-example, evidence)
+Content = Journey</textarea>
+                <button class="copy-btn" type="button" data-copy-target="prompt-two">Copy Prompt</button>
+
+                <section class="answer-card" aria-labelledby="answer-two-heading">
+                    <h3 id="answer-two-heading">Answer 2</h3>
+                    <p class="answer-hint">Write or paste your answer below. This field expands vertically as needed.</p>
+                    <textarea class="answer-input" id="answer-two" aria-label="Answer to prompt 2" placeholder="Your answer"></textarea>
+                    <button class="copy-btn" type="button" data-copy-target="answer-two">Copy Prompt</button>
+                </section>
+            </article>
+        </section>
+
+        <section class="content-section reading-content" aria-labelledby="journey-guide-heading">
+            <h2 class="section-heading" id="journey-guide-heading">A Content Journey, Step by Step</h2>
+            <p>A strong piece of content guides the reader through a sequence of questions and connected ideas. Each stop creates a reason to move toward the next one.</p>
+
+            <h3>1. Prepare the journey</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Element</th><th scope="col">Purpose</th><th scope="col">Planning question</th></tr></thead>
+                    <tbody>
+                        <tr><th scope="row">Intention</th><td>The reason to begin creating this content.</td><td>What need or opportunity makes this content necessary?</td></tr>
+                        <tr><th scope="row">Intent / Destination</th><td>The change the reader should experience by the end.</td><td>What should the reader think, feel, understand, or do?</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>2. Build the route</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Element</th><th scope="col">Role in the journey</th></tr></thead>
+                    <tbody>
+                        <tr><th scope="row">Question</th><td>Finds the next turn: where are we, where should we go next, and why?</td></tr>
+                        <tr><th scope="row">Logic</th><td>Builds the connection from the current position to the next one.</td></tr>
+                        <tr><th scope="row">Supporting elements</th><td>Makes the connection visible, understandable, and credible.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <h4>Possible supporting elements</h4>
+            <ul>
+                <li>Examples and real events</li>
+                <li>Data and evidence</li>
+                <li>Analogies and comparisons</li>
+                <li>Counter-examples and explanations</li>
+            </ul>
+
+            <h3>3. Repeat the engine at every turn</h3>
+            <ol class="flow-list">
+                <li><strong>Current Position:</strong> Establish where the reader is now.</li>
+                <li><strong>Question:</strong> Ask where the reader should go next and why.</li>
+                <li><strong>Logic:</strong> Explain how the next position follows from the current one.</li>
+                <li><strong>Supporting Elements:</strong> Use evidence and examples to make the route clear and credible.</li>
+                <li><strong>Next Position:</strong> Arrive at the next idea, then ask the next question.</li>
+                <li><strong>Destination:</strong> Continue until the reader reaches the intended change.</li>
+            </ol>
+            <p class="callout"><strong>Guiding rule:</strong> Let the content unfold through questions. Each answer should open the way to the next question instead of giving the conclusion immediately.</p>
+        </section>
+
+        <footer class="footer">Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.</footer>
+    </main>
+
+    <script>
+        async function copyText(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                return;
+            }
+            const temporaryField = document.createElement('textarea');
+            temporaryField.value = text;
+            temporaryField.setAttribute('readonly', '');
+            temporaryField.style.position = 'fixed';
+            temporaryField.style.opacity = '0';
+            document.body.appendChild(temporaryField);
+            temporaryField.select();
+            const copied = document.execCommand('copy');
+            temporaryField.remove();
+            if (!copied) throw new Error('Clipboard copy failed');
+        }
+
+        document.querySelectorAll('[data-copy-target]').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const field = document.getElementById(button.dataset.copyTarget);
+                const originalText = 'Copy Prompt';
+                try {
+                    await copyText(field.value);
+                    button.textContent = 'Copied!';
+                    button.classList.add('copied');
+                } catch (error) {
+                    button.textContent = 'Copy failed';
+                }
+                window.setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 1800);
+            });
+        });
+    </script>
+</body>
+</html>

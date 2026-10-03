@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destination Chain Generation Prompt</title>
+    <link rel="icon" href="spm.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #faf9f6;
+            --surface-color: #ffffff;
+            --border-color: #e2dfdc;
+            --border-focus: #706b63;
+            --text-main: #2c2a29;
+            --text-muted: #6e6963;
+            --accent: #1a1918;
+            --accent-hover: #383532;
+            --success: #2e7d32;
+            --header-color: #4338ca;
+            --font-serif: 'Newsreader', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .document-container {
+            max-width: 760px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 48px 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Header Styles */
+        .doc-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 30px;
+        }
+
+        .doc-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--header-color);
+            margin-bottom: 8px;
+        }
+
+        .doc-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Section Layout */
+        .section-heading {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 36px 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .input-example {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .doc-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .doc-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            background: var(--surface-color);
+            box-shadow: 0 0 0 3px rgba(112, 107, 99, 0.1);
+        }
+
+        /* Output Box Styling */
+        .output-card {
+            margin-top: 30px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .output-title {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .prompt-preview {
+            width: 100%;
+            min-height: 180px;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            resize: vertical;
+            white-space: pre-wrap;
+            margin-bottom: 16px;
+        }
+
+        .copy-btn {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        /* Footer */
+        .doc-footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            body {
+                padding: 12px 8px;
+            }
+            .document-container {
+                padding: 24px 16px;
+            }
+            .doc-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="document-container">
+        
+        <!-- Header -->
+        <header class="doc-header">
+            <h1 class="doc-title">Destination Chain Generation Prompt</h1>
+            <p class="doc-subtitle">Content should not give the conclusion directly; it should unfold questions and force the reader to the next question.</p>
+        </header>
+
+        <!-- User Inputs Section -->
+        <section>
+            <h2 class="section-heading">1. Variables & Inputs</h2>
+            
+            <div class="input-group">
+                <label class="input-label" for="inputStartingPoint">Starting Point:</label>
+                <div class="input-example">Reader মনে করেন online income শুরু করার জন্য প্রথমে একটি suitable platform বা earning method খুঁজে বের করতে হবে।</div>
+                <textarea id="inputStartingPoint" class="doc-input" placeholder="[Journey-এর শুরুতে reader কোথায় আছে]" oninput="updatePrompt()">Reader মনে করেন online income শুরু করার জন্য প্রথমে একটি suitable platform বা earning method খুঁজে বের করতে হবে।</textarea>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="inputFinalDestination">Final Destination:</label>
+                <div class="input-example">Reader বুঝতে পারেন যে online income শুরু করার আগে তাঁকে এমন একটি skill–problem fit শনাক্ত করতে হবে, যার মাধ্যমে তিনি একটি বাস্তব সমস্যা সমাধান করতে পারেন এবং যার জন্য মানুষ অর্থ দিতে রাজি।</div>
+                <textarea id="inputFinalDestination" class="doc-input" placeholder="[Journey-এর শেষে reader কোথায় পৌঁছাবে]" oninput="updatePrompt()">Reader বুঝতে পারেন যে online income শুরু করার আগে তাঁকে এমন একটি skill–problem fit শনাক্ত করতে হবে, যার মাধ্যমে তিনি একটি বাস্তব সমস্যা সমাধান করতে পারেন এবং যার জন্য মানুষ অর্থ দিতে রাজি।</textarea>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="inputContentContext">Content Context:</label>
+                <div class="input-example">অনলাইনে আয় শুরু করার আগে যে শর্তটি বুঝতেই হবে।</div>
+                <textarea id="inputContentContext" class="doc-input" placeholder="[এই journey-টি কোন content-এর জন্য]" oninput="updatePrompt()">অনলাইনে আয় শুরু করার আগে যে শর্তটি বুঝতেই হবে।</textarea>
+            </div>
+        </section>
+
+        <!-- Generated Output Section -->
+        <section>
+            <h2 class="section-heading">2. Generated Output Prompt</h2>
+            
+            <div class="output-card">
+                <div class="output-header">
+                    <span class="output-title">Live Prompt Preview</span>
+                </div>
+                <textarea id="promptOutput" class="prompt-preview" readonly></textarea>
+                <button class="copy-btn" onclick="copyPrompt()">Copy to Clipboard</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.
+        </footer>
+
+    </div>
+
+    <script>
+        // Reusable Prompt Template containing placeholders
+        const template = `Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+Task:
+
+Treat the content as a journey from a manually defined Starting Point to a manually defined Final Destination, within a manually defined Content Context.
+
+The Starting Point, Final Destination, and Content Context will be provided by the user.
+
+Your task is to identify the minimum number of necessary Intermediate Destinations that the reader must pass through to move logically from the given Starting Point to the given Final Destination within the given Content Context.
+
+Do not determine, redefine, reinterpret, replace, or modify the user's Starting Point, Final Destination, or Content Context.
+
+INPUT
+
+Starting Point:
+{STARTING_POINT}
+
+Final Destination:
+{FINAL_DESTINATION}
+
+Content Context:
+{CONTENT_CONTEXT}
+
+
+CORE CONCEPT
+
+Content = Journey
+
+This Journey has:
+
+Starting Point = Where the reader is at the beginning of the journey.
+
+Final Destination = Where the reader needs to arrive at the end of the journey.
+
+Content Context = The content within which this journey takes place and the contextual boundary within which the Destination Chain must be developed.
+
+Intermediate Destination = A meaningful conceptual position that the reader must reach before the next necessary step toward the Final Destination becomes possible.
+
+The Destination Chain is therefore:
+
+Starting Point
+↓
+Destination 1
+↓
+Destination 2
+↓
+Destination 3
+↓
+...
+↓
+Final Destination
+
+
+YOUR TASK
+
+Determine the necessary Intermediate Destinations between the user-provided Starting Point and Final Destination, while staying within the user-provided Content Context.
+
+Do not create a content outline.
+
+Do not divide the content into sections, headings, chapters, or arbitrary parts.
+
+Instead, identify the necessary changes in the reader's conceptual position that make the journey from the Starting Point to the Final Destination logically possible.
+
+
+WHAT COUNTS AS A DESTINATION
+
+An Intermediate Destination is valid only when the reader must reach that position before the next necessary step in the journey can logically occur.
+
+A Destination may represent a necessary:
+
+understanding
+
+realization
+
+perspective
+
+distinction
+
+decision
+
+recognition
+
+or capability
+
+A Destination must represent a meaningful change in the reader's position.
+
+A mere piece of information, topic, example, argument, evidence, or supporting point is not automatically a Destination.
+
+
+DESTINATION SELECTION RULE
+
+Create an Intermediate Destination only when the reader must reach that position before moving to the next necessary Destination.
+
+Do not create a Destination merely because:
+
+a new topic appears
+
+a new heading is needed
+
+a new argument is introduced
+
+an example is required
+
+evidence is required
+
+a supporting element is needed
+
+the content needs another section
+
+the journey appears too short
+
+the journey needs to look more detailed
+
+Every Destination must contribute directly to the reader's movement toward the Final Destination.
+
+
+CONTENT CONTEXT RULE
+
+Use the Content Context as the contextual boundary for the entire Destination Chain.
+
+Every Intermediate Destination must be relevant to the Content Context.
+
+Do not introduce a Destination that belongs to a different content context.
+
+Do not expand the journey into related topics merely because they appear relevant.
+
+The purpose is to discover the necessary journey within the given Content Context, not to broaden the scope of the content.
+
+
+STARTING POINT AND FINAL DESTINATION RULE
+
+Treat the user's Starting Point as fixed.
+
+Treat the user's Final Destination as fixed.
+
+Do not improve, rewrite, replace, or reinterpret either one.
+
+The Starting Point is where the journey begins.
+
+The Final Destination is where the journey must end.
+
+Your task is to discover only what must exist between them.
+
+
+DESTINATION CHAIN GENERATION
+
+First, understand the relationship between:
+
+Starting Point
+Final Destination
+Content Context
+
+Then determine the minimum necessary sequence of Intermediate Destinations.
+
+Generate:
+
+Starting Point
+↓
+Destination 1
+↓
+Destination 2
+↓
+Destination 3
+↓
+...
+↓
+Final Destination
+
+The number of Intermediate Destinations is not predetermined.
+
+Use as few Destinations as possible while preserving the complete logical progression of the journey.
+
+Do not omit a necessary reasoning step merely to keep the chain short.
+
+Do not add a Destination merely to make the chain more detailed.
+
+
+TRANSITION TEST
+
+For every transition:
+
+Current Destination → Next Destination
+
+determine:
+
+1. Why must the reader move from the Current Destination to the Next Destination?
+
+2. What unresolved gap remains at the Current Destination?
+
+3. Why does that unresolved gap make the Next Destination necessary?
+
+4. Could the reader logically reach the Next Destination without first reaching the Current Destination?
+
+5. Does this transition directly contribute to reaching the Final Destination?
+
+6. Is this transition necessary within the given Content Context?
+
+If a Destination fails this test, remove it or merge it with another Destination.
+
+
+QUESTION IS NOT YET REQUIRED
+
+Do not generate the Question that will move the reader from one Destination to another.
+
+Do not generate the Logic for the transition.
+
+Do not generate Supporting Elements.
+
+Do not generate examples, evidence, analogies, arguments, explanations, or other content assets.
+
+Those will be developed later.
+
+At this stage, your only task is to establish the Destination Chain.
+
+
+DESTINATION CHAIN VS CONTENT OUTLINE
+
+Do not confuse a Destination Chain with a Content Outline.
+
+A Content Outline describes what content will appear in different sections.
+
+A Destination Chain describes where the reader must move conceptually during the journey.
+
+Therefore, do not organize the Destination Chain around:
+
+topics
+
+headings
+
+sections
+
+paragraphs
+
+examples
+
+arguments
+
+or content length
+
+Organize it around necessary changes in the reader's conceptual position.
+
+
+FINAL VALIDATION
+
+After generating the Destination Chain, validate it.
+
+Check:
+
+1. Is the Starting Point exactly the one provided by the user?
+
+2. Is the Final Destination exactly the one provided by the user?
+
+3. Does the entire chain remain within the Content Context?
+
+4. Is every Intermediate Destination necessary?
+
+5. Is any Destination present only because of structural convenience?
+
+6. Is any necessary Destination missing?
+
+7. Does each Destination create the necessary condition for the next Destination?
+
+8. Does the chain contain any unnecessary detour?
+
+9. Does the chain skip any necessary conceptual transition?
+
+10. Is this the shortest logically complete journey from the Starting Point to the Final Destination within the Content Context?
+
+
+OUTPUT FORMAT
+
+1. Input Summary
+
+Starting Point:
+[Repeat the user's Starting Point exactly as provided]
+
+Final Destination:
+[Repeat the user's Final Destination exactly as provided]
+
+Content Context:
+[Repeat the user's Content Context exactly as provided]
+
+
+2. Destination Chain
+
+Starting Point
+↓
+Destination 1
+↓
+Destination 2
+↓
+Destination 3
+↓
+...
+↓
+Final Destination
+
+
+3. Destination Definitions
+
+For each Intermediate Destination, provide:
+
+Destination:
+[Concise name]
+
+Reader's Position:
+[What the reader now understands, realizes, sees differently, decides, recognizes, or becomes capable of]
+
+Why It Is Necessary:
+[Why the reader must reach this Destination before the journey can logically proceed]
+
+
+4. Transition Validation
+
+For every transition, provide:
+
+Current Destination → Next Destination
+
+Why This Transition Is Necessary:
+[Why the reader must make this move]
+
+Unresolved Gap:
+[What remains unresolved at the Current Destination]
+
+Why Next Destination:
+[Why this is the necessary next Destination]
+
+Content Context Relevance:
+[Why this transition belongs within the given Content Context]
+
+
+5. Chain Optimization
+
+Unnecessary Destinations:
+[None or identify them]
+
+Missing Destinations:
+[None or identify them]
+
+Destinations to Merge:
+[None or identify them]
+
+Unnecessary Detours:
+[None or identify them]
+
+Final Assessment:
+[State whether this is the minimum logically complete Destination Chain between the given Starting Point and Final Destination within the given Content Context]
+
+
+FINAL RULE
+
+Do not change the user's Starting Point.
+
+Do not change the user's Final Destination.
+
+Do not change the user's Content Context.
+
+Do not generate the Question at this stage.
+
+Do not generate the Logic at this stage.
+
+Do not generate Supporting Elements at this stage.
+
+Do not develop the actual content at this stage.
+
+Your only task is to discover the minimum logically complete Destination Chain between the user-provided Starting Point and Final Destination within the user-provided Content Context.
+
+The later Content Development process will develop each Destination-to-Destination segment as:
+
+Current Destination
+→ Question
+→ Logic
+→ Supporting Elements
+→ Next Destination`;
+
+        // Function to update the prompt in real-time as the user types
+        function updatePrompt() {
+            const startingPoint = document.getElementById('inputStartingPoint').value;
+            const finalDestination = document.getElementById('inputFinalDestination').value;
+            const contentContext = document.getElementById('inputContentContext').value;
+
+            let finalPrompt = template
+                .replace('{STARTING_POINT}', startingPoint)
+                .replace('{FINAL_DESTINATION}', finalDestination)
+                .replace('{CONTENT_CONTEXT}', contentContext);
+
+            document.getElementById('promptOutput').value = finalPrompt;
+        }
+
+        // Copy functionality with visual feedback
+        function copyPrompt() {
+            const outputBox = document.getElementById('promptOutput');
+            const btn = document.querySelector('.copy-btn');
+
+            outputBox.select();
+            outputBox.setSelectionRange(0, 99999);
+
+            try {
+                document.execCommand('copy');
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+
+                window.getSelection().removeAllRanges();
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        }
+
+        // Initialize prompt generation on page load
+        window.onload = updatePrompt;
+    </script>
+</body>
+</html>
